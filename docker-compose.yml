@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  bioclip-api:
+    build: .
+    image: bioclip-api:latest
+    container_name: bioclip-server
+    restart: unless-stopped
+    ports:
+      - "29844:8000"
+    volumes:
+      - ./models:/app/models
+      - ./offline_images:/app/offline_images
+      - ./bioclip.html:/app/bioclip.html
+
+#     networks:
+#       - 1panel-network
+
+# networks:
+#   1panel-network:
+#     external: true

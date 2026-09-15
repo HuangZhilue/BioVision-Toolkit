@@ -1,0 +1,10 @@
+__pycache__/
+models/
+offline_images/
+temp_image.jpg
+.git/
+.vscode/
+*.md
+*.log
+venv/
+env/

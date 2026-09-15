@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地化 BioCLIP 物种识别</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, var(--bg), #111827);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #34d399, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #e2e8f0;
+        }
+
+        .file-upload {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+            border: 2px dashed var(--border);
+            border-radius: 0.75rem;
+            background: rgba(15, 23, 42, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload:hover,
+        .file-upload.dragover {
+            border-color: var(--primary);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .upload-text {
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        #imagePreview {
+            max-width: 100%;
+            max-height: 300px;
+            margin-top: 1.5rem;
+            border-radius: 0.5rem;
+            display: none;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        button.btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease, opacity 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.submit-btn {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+        }
+
+        button.submit-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        button:disabled {
+            background: var(--border) !important;
+            cursor: not-allowed;
+            color: var(--text-muted) !important;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .result-card {
+            background: var(--surface);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .result-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .result-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 180px;
+        }
+
+        .result-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background: #0f172a;
+        }
+
+        .badge-china {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .result-info {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .taxon-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #f8fafc;
+        }
+
+        .common-name {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: auto;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .score-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #ef4444;
+            margin-bottom: 1.5rem;
+            display: none;
+        }
+
+        button.secondary-btn {
+            background: var(--border);
+            color: white;
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+        }
+
+        button.secondary-btn:hover:not(:disabled) {
+            background: #475569;
+        }
+
+        .badge-rare {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: rgba(100, 116, 139, 0.9);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            background: #0f172a;
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+
+    <!-- 引入 exifr 库来解析图片的 EXIF GPS 信息 -->
+    <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js">
+        async function performOnlineIdentification() {
+            const token = apiTokenInput.value.trim();
+            if (!token) {
+                showError('在线识别需要填写 iNaturalist API Token，请在上方填写。');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            if (!selectedFile) return;
+
+            localStorage.setItem('inat_token', token);
+
+            hideError();
+            const onlineBtn = document.getElementById('onlineSubmitBtn');
+            const onlineBtnText = onlineBtn.querySelector('.online-btn-text');
+            const onlineSpinner = onlineBtn.querySelector('.online-spinner');
+
+            onlineBtn.disabled = true;
+            onlineBtnText.textContent = '在线请求中...';
+            onlineSpinner.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            formData.append('token', token);
+
+            let url = '/api/identify/online';
+            if (selectedLat !== null && selectedLng !== null) {
+                formData.append('lat', selectedLat.toString());
+                formData.append('lng', selectedLng.toString());
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `API Error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.errors && errorData.errors.length > 0) {
+                            errorMessage = errorData.errors.map(e => e.message || JSON.stringify(e)).join(', ');
+                        } else if (errorData.error) {
+                            errorMessage = errorData.error;
+                        }
+                    } catch (e) { }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                displayOnlineResults(data.results);
+            } catch (err) {
+                showError('在线识别失败: ' + err.message);
+                onlineBtn.disabled = false;
+                onlineBtnText.textContent = '🌐 尝试 iNaturalist 在线深度识别';
+                onlineSpinner.style.display = 'none';
+            }
+        }
+
+        function displayOnlineResults(results) {
+            resultsContainer.innerHTML = '<h3 style="grid-column: 1/-1; color: var(--primary); margin-bottom: 1rem;">🌐 iNaturalist 在线识别结果</h3>';
+
+            if (!results || results.length === 0) {
+                resultsContainer.innerHTML += '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">未找到匹配的鸟类物种。</p>';
+                return;
+            }
+
+            resultsContainer.innerHTML += results.slice(0, 8).map(result => {
+                const taxon = result.taxon;
+                const score = (result.score || 0).toFixed(2);
+                const scorePercent = Math.min(100, Math.max(0, score));
+                const defaultPhoto = (taxon.default_photo && taxon.default_photo.medium_url) ? taxon.default_photo.medium_url : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQxNTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+
+                return `
+                    <div class="result-card">
+                        <div class="result-img-wrapper">
+                            <img class="result-img" src="${defaultPhoto}" alt="${taxon.name}">
+                        </div>
+                        <div class="result-info">
+                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}</div>
+                            <div class="common-name">${taxon.name}</div>
+                            
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${scorePercent}%"></div>
+                            </div>
+                            <div class="score-text">置信度: ${scorePercent}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsContainer.innerHTML += `
+                <div style="grid-column: 1/-1; text-align: center; margin-top: 2rem;">
+                    <button class="btn secondary-btn" onclick="document.getElementById('submitBtn').click()" style="margin: 0 auto;">返回重新进行本地离线识别</button>
+                </div>
+            `;
+        }
+
+    </script>
+    <!-- 引入 Leaflet 地图 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+        async function performOnlineIdentification() {
+            const token = apiTokenInput.value.trim();
+            if (!token) {
+                showError('在线识别需要填写 iNaturalist API Token，请在上方填写。');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            if (!selectedFile) return;
+
+            localStorage.setItem('inat_token', token);
+
+            hideError();
+            const onlineBtn = document.getElementById('onlineSubmitBtn');
+            const onlineBtnText = onlineBtn.querySelector('.online-btn-text');
+            const onlineSpinner = onlineBtn.querySelector('.online-spinner');
+
+            onlineBtn.disabled = true;
+            onlineBtnText.textContent = '在线请求中...';
+            onlineSpinner.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            formData.append('token', token);
+
+            let url = '/api/identify/online';
+            if (selectedLat !== null && selectedLng !== null) {
+                formData.append('lat', selectedLat.toString());
+                formData.append('lng', selectedLng.toString());
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `API Error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.errors && errorData.errors.length > 0) {
+                            errorMessage = errorData.errors.map(e => e.message || JSON.stringify(e)).join(', ');
+                        } else if (errorData.error) {
+                            errorMessage = errorData.error;
+                        }
+                    } catch (e) { }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                displayOnlineResults(data.results);
+            } catch (err) {
+                showError('在线识别失败: ' + err.message);
+                onlineBtn.disabled = false;
+                onlineBtnText.textContent = '🌐 尝试 iNaturalist 在线深度识别';
+                onlineSpinner.style.display = 'none';
+            }
+        }
+
+        function displayOnlineResults(results) {
+            resultsContainer.innerHTML = '<h3 style="grid-column: 1/-1; color: var(--primary); margin-bottom: 1rem;">🌐 iNaturalist 在线识别结果</h3>';
+
+            if (!results || results.length === 0) {
+                resultsContainer.innerHTML += '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">未找到匹配的鸟类物种。</p>';
+                return;
+            }
+
+            resultsContainer.innerHTML += results.slice(0, 8).map(result => {
+                const taxon = result.taxon;
+                const score = (result.score || 0).toFixed(2);
+                const scorePercent = Math.min(100, Math.max(0, score));
+                const defaultPhoto = (taxon.default_photo && taxon.default_photo.medium_url) ? taxon.default_photo.medium_url : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQxNTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+
+                return `
+                    <div class="result-card">
+                        <div class="result-img-wrapper">
+                            <img class="result-img" src="${defaultPhoto}" alt="${taxon.name}">
+                        </div>
+                        <div class="result-info">
+                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}</div>
+                            <div class="common-name">${taxon.name}</div>
+                            
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${scorePercent}%"></div>
+                            </div>
+                            <div class="score-text">置信度: ${scorePercent}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsContainer.innerHTML += `
+                <div style="grid-column: 1/-1; text-align: center; margin-top: 2rem;">
+                    <button class="btn secondary-btn" onclick="document.getElementById('submitBtn').click()" style="margin: 0 auto;">返回重新进行本地离线识别</button>
+                </div>
+            `;
+        }
+
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>本地化 BioCLIP 物种识别</h1>
+            <p class="subtitle">上传动植物图片，基于本地 BioCLIP 模型自动识别物种</p>
+        </header>
+
+        <div id="errorBox" class="error-msg"></div>
+
+
+        <div class="card">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="apiToken">iNaturalist API Token (在线深度识别所需，如只用离线识别可留空)</label>
+                <input type="text" id="apiToken" class="input-field" placeholder="在此输入您的 API Token...">
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">
+                    要获取 Token，请登录 <a href="https://www.inaturalist.org/users/api_token" target="_blank"
+                        style="color: var(--primary);">iNaturalist</a>。
+                </p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="form-group">
+                <label>上传图片</label>
+                <div class="file-upload" id="dropZone">
+                    <input type="file" id="imageInput" accept="image/*">
+                    <div class="upload-icon">📸</div>
+                    <div class="upload-text">
+                        <strong>点击选择</strong> 或将图片拖拽至此处
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <img id="imagePreview" alt="预览">
+                </div>
+            </div>
+
+
+            <h3 style="margin-bottom: 1rem; font-size: 1.1rem; margin-top: 2rem;">区域限制 (省份/定位)</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+                如果指定了省份，系统将降低“该省未曾记录过”的鸟类的排名，以提高本地鸟类识别准确率。
+            </p>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="regionSelect">手动选择省份 (优先生效)</label>
+                <select id="regionSelect" class="input-field">
+                    <option value="">自动判定 (使用下方地图/照片定位)</option>
+                    <option value="北京">北京</option>
+                    <option value="天津">天津</option>
+                    <option value="河北">河北</option>
+                    <option value="山西">山西</option>
+                    <option value="内蒙古">内蒙古</option>
+                    <option value="辽宁">辽宁</option>
+                    <option value="吉林">吉林</option>
+                    <option value="黑龙江">黑龙江</option>
+                    <option value="上海">上海</option>
+                    <option value="江苏">江苏</option>
+                    <option value="浙江">浙江</option>
+                    <option value="安徽">安徽</option>
+                    <option value="福建">福建</option>
+                    <option value="江西">江西</option>
+                    <option value="山东">山东</option>
+                    <option value="河南">河南</option>
+                    <option value="湖北">湖北</option>
+                    <option value="湖南">湖南</option>
+                    <option value="广东">广东</option>
+                    <option value="广西">广西</option>
+                    <option value="海南">海南</option>
+                    <option value="重庆">重庆</option>
+                    <option value="四川">四川</option>
+                    <option value="贵州">贵州</option>
+                    <option value="云南">云南</option>
+                    <option value="西藏">西藏</option>
+                    <option value="陕西">陕西</option>
+                    <option value="甘肃">甘肃</option>
+                    <option value="青海">青海</option>
+                    <option value="宁夏">宁夏</option>
+                    <option value="新疆">新疆</option>
+                    <option value="台湾">台湾</option>
+                    <option value="香港">香港</option>
+                    <option value="澳门">澳门</option>
+                </select>
+            </div>
+
+            <div id="map"
+                style="height: 300px; width: 100%; border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid var(--border); z-index: 1;">
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; text-align: center;">
+                您也可以直接在地图上点击以手动选择位置。</p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span id="locationStatus" style="font-size: 0.9rem; color: #94a3b8;">未设置位置信息</span>
+                <button id="geoBtn" type="button" class="btn secondary-btn">获取当前设备定位</button>
+            </div>
+
+            <button id="submitBtn" class="btn submit-btn" disabled style="margin-top: 1.5rem;">
+                <span class="btn-text">开始识别</span>
+                <div class="loading-spinner"></div>
+            </button>
+        </div>
+
+        <div id="resultsContainer" class="results">
+            <!-- Results will be injected here -->
+        </div>
+    </div>
+
+    <script>
+        const apiTokenInput = document.getElementById('apiToken');
+        const imageInput = document.getElementById('imageInput');
+        const dropZone = document.getElementById('dropZone');
+        const imagePreview = document.getElementById('imagePreview');
+        const submitBtn = document.getElementById('submitBtn');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const errorBox = document.getElementById('errorBox');
+        const btnText = document.querySelector('.btn-text');
+        const spinner = document.querySelector('.loading-spinner');
+
+        let selectedFile = null;
+
+        // Restore token from localStorage
+        const savedToken = localStorage.getItem('inat_token');
+        if (savedToken) {
+            apiTokenInput.value = savedToken;
+        }
+
+
+        const regionSelect = document.getElementById('regionSelect');
+        const locationStatus = document.getElementById('locationStatus');
+        const geoBtn = document.getElementById('geoBtn');
+
+        let selectedLat = null;
+        let selectedLng = null;
+        let marker = null;
+
+        // Initialize Leaflet map
+        const map = L.map('map').setView([35.8617, 104.1954], 4);
+        L.tileLayer('http://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+            subdomains: ['1', '2', '3', '4'],
+            maxZoom: 19,
+            attribution: '© 高德地图'
+        }).addTo(map);
+
+        setTimeout(() => { map.invalidateSize(); }, 500);
+
+        map.on('click', function (e) {
+            updateLocation(e.latlng.lat, e.latlng.lng, '已手动在地图上选择位置', true);
+        });
+
+        function updateLocation(lat, lng, statusMsg, success) {
+            selectedLat = lat;
+            selectedLng = lng;
+            if (!marker) {
+                marker = L.marker([lat, lng]).addTo(map);
+            } else {
+                marker.setLatLng([lat, lng]);
+            }
+            map.setView([lat, lng], 10);
+
+            locationStatus.textContent = statusMsg;
+            locationStatus.style.color = success ? '#34d399' : '#ef4444';
+        }
+
+        // Geolocation Button Logic
+        geoBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert('您的浏览器不支持地理定位功能');
+                return;
+            }
+
+            locationStatus.textContent = '正在请求定位权限并获取当前位置...';
+            locationStatus.style.color = '#fbbf24';
+            geoBtn.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    updateLocation(position.coords.latitude, position.coords.longitude, '已成功获取当前设备定位', true);
+                    geoBtn.disabled = false;
+                },
+                (error) => {
+                    locationStatus.textContent = '获取定位失败';
+                    locationStatus.style.color = '#ef4444';
+                    geoBtn.disabled = false;
+                },
+                { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+            );
+        });
+
+
+        // Handle file selection
+        imageInput.addEventListener('change', handleFileSelect);
+
+        // Handle drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                imageInput.files = e.dataTransfer.files;
+                handleFileSelect({ target: imageInput });
+            }
+        });
+
+
+        async function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'inline-block';
+                };
+                reader.readAsDataURL(file);
+                updateSubmitBtnState();
+
+                // Try EXIF GPS
+                locationStatus.textContent = '正在读取照片 GPS...';
+                locationStatus.style.color = '#fbbf24';
+                try {
+                    const gps = await exifr.gps(file);
+                    if (gps && gps.latitude != null && gps.longitude != null) {
+                        updateLocation(gps.latitude, gps.longitude, '已成功读取照片自带 GPS 信息', true);
+                    } else {
+                        locationStatus.textContent = '照片无 GPS 信息，您可以点击地图或获取当前定位';
+                        locationStatus.style.color = '#94a3b8';
+                    }
+                } catch (error) {
+                    locationStatus.textContent = '照片解析失败，请点击地图选择或获取定位';
+                    locationStatus.style.color = '#94a3b8';
+                }
+            }
+        }
+
+
+        function updateSubmitBtnState() {
+            submitBtn.disabled = !selectedFile;
+        }
+
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.style.display = 'block';
+        }
+
+        function hideError() {
+            errorBox.style.display = 'none';
+        }
+
+        submitBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            // UI loading state
+            hideError();
+            submitBtn.disabled = true;
+            btnText.textContent = '识别中... (首次运行可能需要耗点时间加载模型)';
+            spinner.style.display = 'block';
+            resultsContainer.innerHTML = '';
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            if (regionSelect.value) {
+                formData.append('province', regionSelect.value);
+            }
+            if (selectedLat !== null && selectedLng !== null) {
+                formData.append('lat', selectedLat.toString());
+                formData.append('lng', selectedLng.toString());
+            }
+
+
+            try {
+                const response = await fetch('/api/identify', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `API Error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.detail) {
+                            errorMessage = errorData.detail;
+                        }
+                    } catch (e) {
+                        // ignore parsing error
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                displayResults(data.results);
+            } catch (err) {
+                showError('识别失败: ' + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = '开始识别';
+                spinner.style.display = 'none';
+            }
+        });
+
+        function displayResults(results) {
+            if (!results || results.length === 0) {
+                resultsContainer.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">未找到匹配的物种。</p>';
+                return;
+            }
+
+            resultsContainer.innerHTML = results.slice(0, 8).map(result => {
+                const taxon = result.taxon;
+                const score = (result.score || 0).toFixed(2);
+                const scorePercent = Math.min(100, Math.max(0, score));
+                const defaultPhoto = (taxon.default_photo && taxon.default_photo.medium_url) ? taxon.default_photo.medium_url : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQxNTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+
+                const badgeHtml = result.is_chinese_bird ? '<div class="badge-china">🇨🇳 中国鸟类</div>' : '';
+                const rareBadge = result.is_rare_in_region ? '<div class="badge-rare">⚠️ 区域罕见</div>' : '';
+
+
+                return `
+                    <div class="result-card">
+                        <div class="result-img-wrapper">
+                            <img class="result-img" src="${defaultPhoto}" alt="${taxon.name}">
+                            ${badgeHtml}
+                            ${rareBadge}
+                        </div>
+                        <div class="result-info">
+                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}</div>
+                            <div class="common-name">${taxon.name}</div>
+                            
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${scorePercent}%"></div>
+                            </div>
+                            <div class="score-text">置信度: ${scorePercent}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            resultsContainer.innerHTML += `
+                <div style="grid-column: 1/-1; text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+                    <p style="color: var(--text-muted); margin-bottom: 1rem;">对离线识别结果不满意？</p>
+                    <button id="onlineSubmitBtn" class="btn secondary-btn" style="margin: 0 auto;">
+                        <span class="online-btn-text">🌐 尝试 iNaturalist 在线深度识别</span>
+                        <div class="loading-spinner online-spinner"></div>
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('onlineSubmitBtn').addEventListener('click', performOnlineIdentification);
+        }
+
+
+        async function performOnlineIdentification() {
+            const token = apiTokenInput.value.trim();
+            if (!token) {
+                showError('在线识别需要填写 iNaturalist API Token，请在上方填写。');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+            if (!selectedFile) return;
+
+            localStorage.setItem('inat_token', token);
+
+            hideError();
+            const onlineBtn = document.getElementById('onlineSubmitBtn');
+            const onlineBtnText = onlineBtn.querySelector('.online-btn-text');
+            const onlineSpinner = onlineBtn.querySelector('.online-spinner');
+
+            onlineBtn.disabled = true;
+            onlineBtnText.textContent = '在线请求中...';
+            onlineSpinner.style.display = 'block';
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+            formData.append('token', token);
+
+            if (regionSelect.value) {
+                formData.append('province', regionSelect.value);
+            }
+
+            let url = '/api/identify/online';
+            if (selectedLat !== null && selectedLng !== null) {
+                formData.append('lat', selectedLat.toString());
+                formData.append('lng', selectedLng.toString());
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    let errorMessage = `API Error: ${response.status}`;
+                    try {
+                        const errorData = await response.json();
+                        if (errorData.errors && errorData.errors.length > 0) {
+                            errorMessage = errorData.errors.map(e => e.message || JSON.stringify(e)).join(', ');
+                        } else if (errorData.error) {
+                            errorMessage = errorData.error;
+                        }
+                    } catch (e) { }
+                    throw new Error(errorMessage);
+                }
+
+                const data = await response.json();
+                displayOnlineResults(data.results);
+            } catch (err) {
+                showError('在线识别失败: ' + err.message);
+                onlineBtn.disabled = false;
+                onlineBtnText.textContent = '🌐 尝试 iNaturalist 在线深度识别';
+                onlineSpinner.style.display = 'none';
+            }
+        }
+
+        function displayOnlineResults(results) {
+            resultsContainer.innerHTML = '<h3 style="grid-column: 1/-1; color: var(--primary); margin-bottom: 1rem;">🌐 iNaturalist 在线识别结果</h3>';
+
+            if (!results || results.length === 0) {
+                resultsContainer.innerHTML += '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">未找到匹配的鸟类物种。</p>';
+                return;
+            }
+
+            resultsContainer.innerHTML += results.slice(0, 8).map(result => {
+                const taxon = result.taxon;
+                const score = (result.score || 0).toFixed(2);
+                const scorePercent = Math.min(100, Math.max(0, score));
+                const defaultPhoto = (taxon.default_photo && taxon.default_photo.medium_url) ? taxon.default_photo.medium_url : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQxNTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+
+                return `
+                    <div class="result-card">
+                        <div class="result-img-wrapper">
+                            <img class="result-img" src="${defaultPhoto}" alt="${taxon.name}">
+                        </div>
+                        <div class="result-info">
+                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}</div>
+                            <div class="common-name">${taxon.name}</div>
+                            
+                            <div class="score-bar">
+                                <div class="score-fill" style="width: ${scorePercent}%"></div>
+                            </div>
+                            <div class="score-text">置信度: ${scorePercent}%</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsContainer.innerHTML += `
+                <div style="grid-column: 1/-1; text-align: center; margin-top: 2rem;">
+                    <button class="btn secondary-btn" onclick="document.getElementById('submitBtn').click()" style="margin: 0 auto;">返回重新进行本地离线识别</button>
+                </div>
+            `;
+        }
+
+    </script>
+</body>
+
+</html>
