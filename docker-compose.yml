@@ -12,6 +12,8 @@ services:
       - ./models:/app/models
       - ./offline_images:/app/offline_images
       - ./bioclip.html:/app/bioclip.html
+      - ./kestrel.html:/app/kestrel.html  # 新增挂载
+      - ./app.py:/app/app.py              # 新增挂载
 
 #     networks:
 #       - 1panel-network

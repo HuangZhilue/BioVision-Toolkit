@@ -11,7 +11,6 @@ def build_database():
     
     birds_dict = {}
     
-    # 获取前 1500 种中国最常见的鸟类 (3页)
     for page in range(1, 4):
         url = f"https://api.inaturalist.org/v1/observations/species_counts?place_id={place_id}&taxon_id={taxon_id}&locale={locale}&per_page={per_page}&page={page}"
         print(f"正在抓取第 {page} 页...")
@@ -30,9 +29,10 @@ def build_database():
         for item in results:
             taxon = item.get("taxon", {})
             sci_name = taxon.get("name")
-            if sci_name:
+            taxon_id = taxon.get("id")
+            
+            if sci_name and taxon_id:
                 chinese_name = taxon.get("preferred_common_name")
-                # 如果没有中文名，尽量保留一个英文俗名或保持为空
                 if not chinese_name:
                     chinese_name = taxon.get("english_common_name")
                 
@@ -42,11 +42,39 @@ def build_database():
                     photo_url = default_photo.get("medium_url")
                 
                 birds_dict[sci_name] = {
+                    "taxon_id": taxon_id,
                     "chinese_name": chinese_name,
-                    "image_url": photo_url
+                    "image_url": photo_url,
+                    "family": "Unknown"
                 }
                 
-        # 遵守 iNaturalist 礼仪，防止请求过快
+        time.sleep(1)
+        
+    print("开始获取科(family)分类信息...")
+    taxon_items = list(birds_dict.items())
+    chunk_size = 30
+    for i in range(0, len(taxon_items), chunk_size):
+        chunk = taxon_items[i:i+chunk_size]
+        ids = [str(item[1]["taxon_id"]) for item in chunk]
+        
+        taxa_url = f"https://api.inaturalist.org/v1/taxa/{','.join(ids)}?locale={locale}"
+        print(f"正在抓取分类详情... ({i}/{len(taxon_items)})")
+        try:
+            res = requests.get(taxa_url)
+            if res.status_code == 200:
+                for t in res.json().get("results", []):
+                    sci_name = t.get("name")
+                    family_name = "Unknown"
+                    if t.get("ancestors"):
+                        for anc in t["ancestors"]:
+                            if anc.get("rank") == "family":
+                                family_name = anc.get("name") or "Unknown"
+                                break
+                    if sci_name in birds_dict:
+                        birds_dict[sci_name]["family"] = family_name
+        except Exception as e:
+            print("获取分类失败:", e)
+            
         time.sleep(1)
         
     # 保存到 JSON 文件

@@ -141,6 +141,15 @@ async def read_index():
     with open("bioclip.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/kestrel", response_class=HTMLResponse)
+async def read_kestrel():
+    with open("kestrel.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@app.get("/api/birds")
+async def get_birds():
+    return china_birds_db
+
 @app.post("/api/identify")
 async def identify_image(image: UploadFile = File(...), province: Optional[str] = Form(None), lat: Optional[str] = Form(None), lng: Optional[str] = Form(None)):
     if not image.content_type.startswith("image/"):
@@ -191,6 +200,7 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
             # Extract names safely depending on pybioclip version
             
             sci_name = pred.get("scientific_name") or pred.get("species") or pred.get("classification") or "Unknown"
+            family = pred.get("family") or "Unknown"
             
             # Lookup in offline database
             offline_info = china_birds_db.get(sci_name)
@@ -206,6 +216,7 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                         pred["score"] = pred.get("score", 0.0) * 0.01
 
                 common_name = offline_info.get("chinese_name") or pred.get("common_name") or sci_name
+                family = offline_info.get("family") or family
 
                 # Use local image path
                 image_filename = sci_name.replace(" ", "_").replace("/", "_") + ".jpg"
@@ -225,6 +236,11 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                             match = data["results"][0]
                             if match.get("preferred_common_name"):
                                 common_name = match["preferred_common_name"]
+                            if match.get("ancestors"):
+                                for anc in match["ancestors"]:
+                                    if anc.get("rank") == "family":
+                                        family = anc.get("name") or family
+                                        break
                             if match.get("default_photo") and match["default_photo"].get("medium_url"):
                                 default_photo = match["default_photo"]["medium_url"]
                 except Exception as e:
@@ -236,6 +252,7 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                 "is_rare_in_region": is_rare_in_region,
                 "taxon": {
                     "name": sci_name,
+                    "family": family,
                     "preferred_common_name": common_name,
                     "default_photo": {"medium_url": default_photo} if default_photo else None
                 }

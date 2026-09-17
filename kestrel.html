@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Kestrel Tagger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.7);
+            --surface-light: rgba(51, 65, 85, 0.7);
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-radius: 12px;
+            --border-color: rgba(255,255,255,0.1);
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-color); min-height: 100vh;}
+        
+        .topbar { 
+            padding: 1rem 2rem; 
+            background: var(--surface-color); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color); 
+            position: sticky; top: 0; z-index: 100;
+        }
+        .topbar .title { font-size: 1.25rem; font-weight: 700; margin-right: 2rem; color: var(--primary-color);}
+        
+        .input-group { display: flex; align-items: center; gap: 0.5rem; }
+        .input-group label { font-size: 0.875rem; color: var(--text-muted); }
+        input, select, button { 
+            padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
+            background: rgba(15, 23, 42, 0.6); color: white; font-family: inherit;
+        }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); }
+        
+        button { background: rgba(255,255,255,0.1); cursor: pointer; transition: all 0.2s ease; font-weight: 500;}
+        button:hover { background: rgba(255,255,255,0.2); }
+        button.primary { background: var(--primary-color); color: #000; border: none; }
+        button.primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);}
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .container { padding: 2rem; display: flex; flex-direction: column; gap: 1rem; max-width: 1400px; margin: 0 auto;}
+        
+        .scene-group {
+            background: var(--surface-color); border-radius: var(--border-radius);
+            border: 1px solid var(--border-color); 
+            display: flex; flex-direction: column;
+        }
+        
+        .row-layout {
+            display: flex; gap: 1.5rem; padding: 1rem; align-items: stretch;
+            transition: background 0.2s;
+        }
+        .row-layout:hover { background: rgba(255,255,255,0.02); }
+        
+        .scene-header {
+            position: relative;
+        }
+        
+        .sub-rows {
+            display: none;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid var(--border-color);
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+        }
+        .sub-rows.expanded { display: flex; flex-direction: column; }
+        
+        .sub-row {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .sub-row:last-child { border-bottom: none; }
+        
+        .img-wrapper { position: relative; width: 200px; height: 200px; flex-shrink: 0; background: #000; border-radius: 8px; overflow: hidden;}
+        .img-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        .meta-badge { position: absolute; top: 0.5rem; left: 0.5rem; background: rgba(0,0,0,0.6); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem;}
+        .status-badge { position: absolute; top: 0.5rem; right: 0.5rem; background: rgba(0,0,0,0.6); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; color: var(--primary-color); border: 1px solid var(--primary-color);}
+        
+        .row-body { display: flex; flex-direction: column; gap: 1rem; flex: 1; min-width: 0; }
+        
+        .tags { display: flex; flex-wrap: wrap; gap: 1rem; flex: 1; align-content: flex-start;}
+        .tag { 
+            border-radius: 12px; background: rgba(255,255,255,0.02); 
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.1); 
+            transition: all 0.2s; display: flex; flex-direction: column; overflow: hidden;
+            width: 250px; 
+        }
+        .tag:hover { background: rgba(255,255,255,0.05); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .tag.selected { border-color: var(--primary-color); box-shadow: 0 0 0 2px var(--primary-color); }
+        .tag.online { border-color: rgba(56, 189, 248, 0.5); }
+        
+        .tag-img-wrapper { position: relative; width: 100%; height: 180px; background: #000; }
+        .tag-img { width: 100%; height: 100%; object-fit: cover; }
+        .tag-badge { position: absolute; top: 8px; right: 8px; background: rgba(239, 68, 68, 0.9); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: none; }
+        
+        .tag-info { padding: 0.6rem; display: flex; flex-direction: column; flex: 1; }
+        .tag-name { font-size: 0.9rem; font-weight: 600; color: #fff; margin-bottom: 2px; }
+        .tag-sci { font-size: 0.75rem; color: var(--text-muted); font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px;}
+        
+        .tag-score-row { margin-top: auto; display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem;}
+        .tag-score-text { font-size: 0.75rem; color: var(--text-muted); }
+        .tag-score-bar-bg { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 4px; overflow: hidden;}
+        .tag-score-bar { height: 100%; background: var(--primary-color); border-radius: 2px;}
+        
+        .action-row { display: flex; gap: 0.5rem; align-items: stretch; margin-top: auto;}
+        
+        .autocomplete-wrapper { position: relative; width: 250px; flex-shrink: 0; z-index: 10; }
+        .autocomplete-wrapper:focus-within { z-index: 9999; }
+        .autocomplete-input { width: 100%; height: 100%; padding: 0.6rem; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.3); color: white; }
+        .autocomplete-dropdown { 
+            position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-height: 250px; 
+            overflow-y: auto; background: #1e293b; border: 1px solid #334155; border-radius: 8px; 
+            display: none; z-index: 10; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .autocomplete-item { padding: 0.6rem 1rem; cursor: pointer; border-bottom: 1px solid #334155; font-size: 0.9rem;}
+        .autocomplete-item:hover { background: #334155; }
+        
+        .online-btn { 
+            padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
+            background: rgba(56, 189, 248, 0.1); color: #38bdf8; cursor: pointer; white-space: nowrap;
+        }
+        .online-btn:hover { background: rgba(56, 189, 248, 0.2); }
+        
+        .expand-btn {
+            padding: 0.6rem 1rem; border-radius: 8px; border: 1px solid var(--border-color); 
+            background: transparent; color: var(--text-muted); cursor: pointer; white-space: nowrap;
+        }
+        .expand-btn:hover { background: rgba(255,255,255,0.05); color: white; }
+
+        .global-loader { display: none; margin-left: 1rem; font-size: 0.875rem; color: var(--text-muted); align-items: center; gap: 0.5rem;}
+        .spinner { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid var(--primary-color); border-radius: 50%; width: 16px; height: 16px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+        .stats-label {
+            margin-left: auto;
+            padding: 0.5rem 1rem;
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .stats-label:hover {
+            background: rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%);
+            background: #334155; color: white; padding: 0.75rem 1.5rem; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="title">Project Kestrel Tagger</div>
+    <button id="openDirBtn" class="primary">打开 Kestrel 文件夹</button>
+    
+    <div class="input-group">
+        <label>省份约束:</label>
+        <select id="provinceSelect">
+            <option value="">(无)</option>
+            <option value="北京">北京</option><option value="四川">四川</option>
+            <option value="云南">云南</option><option value="新疆">新疆</option>
+            <option value="西藏">西藏</option><option value="广东">广东</option>
+            <option value="浙江">浙江</option><option value="青海">青海</option>
+            <option value="内蒙古">内蒙古</option><option value="黑龙江">黑龙江</option>
+        </select>
+    </div>
+    
+    <div class="input-group">
+        <label>Token (在线复核):</label>
+        <input type="password" id="apiToken" placeholder="iNaturalist JWT Token" style="width: 150px;">
+    </div>
+    
+    <button id="batchAnalyzeBtn" disabled>批量离线分析</button>
+    <button id="saveBtn" class="primary" disabled>保存并回填至 Kestrel</button>
+    
+    <div id="statsLabel" class="stats-label" style="display: none;" title="点击跳转至下一个未定种">0 / 0</div>
+    
+    <div class="global-loader" id="globalLoader">
+        <div class="spinner"></div>
+        <span id="loaderText">处理中...</span>
+    </div>
+</div>
+
+<div class="container" id="listContainer">
+    <!-- List items will be injected here -->
+</div>
+
+<div id="toast" class="toast">操作成功</div>
+
+<script>
+    // App State
+    const state = {
+        dirHandle: null,
+        kestrelDirHandle: null,
+        cropDirHandle: null,
+        csvFileHandle: null,
+        csvData: [],
+        csvHeaders: [],
+        scenes: {}, 
+        chinaBirdsDb: {},
+        chinaBirdsList: [],
+        cache: {} // Key: cropFilename, Value: results
+    };
+
+    // DOM Elements
+    const elements = {
+        openDirBtn: document.getElementById('openDirBtn'),
+        batchAnalyzeBtn: document.getElementById('batchAnalyzeBtn'),
+        saveBtn: document.getElementById('saveBtn'),
+        listContainer: document.getElementById('listContainer'),
+        provinceSelect: document.getElementById('provinceSelect'),
+        apiToken: document.getElementById('apiToken'),
+        globalLoader: document.getElementById('globalLoader'),
+        loaderText: document.getElementById('loaderText'),
+        toast: document.getElementById('toast'),
+        statsLabel: document.getElementById('statsLabel')
+    };
+    
+    let currentUnidentifiedIndex = 0;
+    
+    function updateStats() {
+        if (!state.scenes || Object.keys(state.scenes).length === 0) {
+            if (elements.statsLabel) elements.statsLabel.style.display = 'none';
+            return;
+        }
+        
+        let total = 0;
+        let identified = 0;
+        
+        Object.keys(state.scenes).forEach(sceneId => {
+            const scene = state.scenes[sceneId];
+            
+            scene.images.forEach(img => {
+                total++;
+                if (img.identifiedSpecies) {
+                    identified++;
+                }
+            });
+        });
+        
+        elements.statsLabel.textContent = `已定种: ${identified} / ${total}`;
+        elements.statsLabel.style.display = 'block';
+    }
+
+    elements.statsLabel.addEventListener('click', () => {
+        const sceneIds = Object.keys(state.scenes);
+        const unidentifiedIds = sceneIds.filter(id => {
+            const scene = state.scenes[id];
+            return scene.images.some(img => !img.identifiedSpecies);
+        });
+        
+        if (unidentifiedIds.length === 0) {
+            showToast("所有均已定种！");
+            return;
+        }
+        
+        if (currentUnidentifiedIndex >= unidentifiedIds.length) {
+            currentUnidentifiedIndex = 0;
+        }
+        
+        const targetId = unidentifiedIds[currentUnidentifiedIndex];
+        const targetElement = document.querySelector(`.scene-group[data-scene="${targetId}"]`);
+        
+        if (targetElement) {
+            const y = targetElement.getBoundingClientRect().top + window.scrollY - 100; // offset for topbar
+            window.scrollTo({top: y, behavior: 'smooth'});
+            targetElement.style.transition = 'box-shadow 0.3s';
+            targetElement.style.boxShadow = '0 0 0 2px var(--primary-color)';
+            setTimeout(() => targetElement.style.boxShadow = 'none', 1500);
+            
+            const scene = state.scenes[targetId];
+            if (!scene.isExpanded && scene.images.length > 1) {
+                toggleExpand(targetId);
+            }
+        }
+        
+        currentUnidentifiedIndex++;
+    });
+
+    // Load Token from LocalStorage
+    const savedToken = localStorage.getItem('inat_api_token');
+    if (savedToken) elements.apiToken.value = savedToken;
+    elements.apiToken.addEventListener('input', (e) => {
+        localStorage.setItem('inat_api_token', e.target.value.trim());
+    });
+
+    async function loadBirdsDB() {
+        try {
+            const res = await fetch('/api/birds');
+            if (res.ok) {
+                state.chinaBirdsDb = await res.json();
+                state.chinaBirdsList = Object.entries(state.chinaBirdsDb).map(([sci, b]) => ({
+                    scientific: b.scientific_name || sci,
+                    chinese: b.chinese_name,
+                    pinyin: b.pinyin || '',
+                    family: b.family || 'Unknown'
+                }));
+            }
+        } catch (e) {
+            console.error("Failed to load birds DB", e);
+        }
+    }
+    loadBirdsDB();
+
+    function showToast(msg, duration = 3000) {
+        elements.toast.textContent = msg;
+        elements.toast.classList.add('show');
+        setTimeout(() => elements.toast.classList.remove('show'), duration);
+    }
+
+    function parseCSV(text) {
+        const lines = [];
+        let currentLine = [];
+        let currentField = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const nextChar = text[i+1];
+            
+            if (char === '"' && inQuotes && nextChar === '"') {
+                currentField += '"';
+                i++;
+            } else if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                currentLine.push(currentField);
+                currentField = '';
+            } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                if (char === '\r' && nextChar === '\n') i++;
+                currentLine.push(currentField);
+                lines.push(currentLine);
+                currentLine = [];
+                currentField = '';
+            } else {
+                currentField += char;
+            }
+        }
+        if (currentField !== '' || currentLine.length > 0) {
+            currentLine.push(currentField);
+            lines.push(currentLine);
+        }
+        return lines.filter(l => l.length > 1 || (l.length === 1 && l[0].trim() !== ''));
+    }
+
+    function stringifyCSV(headers, data) {
+        const escapeField = (field) => {
+            if (field === null || field === undefined) return '';
+            field = String(field);
+            if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+                return `"${field.replace(/"/g, '""')}"`;
+            }
+            return field;
+        };
+        let csv = headers.map(escapeField).join(',') + '\r\n';
+        data.forEach(row => {
+            csv += headers.map(h => escapeField(row[h])).join(',') + '\r\n';
+        });
+        return csv;
+    }
+
+    elements.openDirBtn.addEventListener('click', async () => {
+        try {
+            if (!window.showDirectoryPicker) {
+                alert("当前浏览器不支持 File System Access API。请使用较新的 Chrome 或 Edge。");
+                return;
+            }
+            state.dirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+            
+            try {
+                state.kestrelDirHandle = await state.dirHandle.getDirectoryHandle('.kestrel');
+            } catch (e) {
+                alert("未在该目录下找到 .kestrel 隐藏文件夹，请确认选择了正确的 Kestrel 输出目录。");
+                return;
+            }
+            
+            try {
+                state.cropDirHandle = await state.kestrelDirHandle.getDirectoryHandle('crop');
+                state.csvFileHandle = await state.kestrelDirHandle.getFileHandle('kestrel_database.csv');
+            } catch (e) {
+                alert("无法读取 crop 文件夹或 kestrel_database.csv。");
+                return;
+            }
+            
+            try {
+                const cacheHandle = await state.kestrelDirHandle.getFileHandle('tagger_cache.json');
+                const cacheFile = await cacheHandle.getFile();
+                const cacheText = await cacheFile.text();
+                state.cache = JSON.parse(cacheText);
+            } catch (e) {
+                state.cache = {};
+            }
+
+            elements.globalLoader.style.display = 'flex';
+            elements.loaderText.textContent = '解析 CSV...';
+            
+            const file = await state.csvFileHandle.getFile();
+            const text = await file.text();
+            
+            const rows = parseCSV(text);
+            if (rows.length < 1) throw new Error("CSV 为空");
+            
+            state.csvHeaders = rows[0].map(h => h.trim());
+            const findCol = (names) => state.csvHeaders.findIndex(h => names.includes(h.trim().toLowerCase()));
+            
+            const filenameIdx = findCol(['filename', 'file_name']);
+            const sceneIdx = findCol(['scene_count', 'scene', 'scene_id']);
+            const qualityIdx = findCol(['quality']);
+            const speciesIdx = findCol(['species']);
+            const cropPathIdx = findCol(['crop_path']);
+            
+            if (filenameIdx === -1 || sceneIdx === -1) {
+                alert(`CSV 缺少必要的列。找到的列: ${state.csvHeaders.join(', ')}`);
+                elements.globalLoader.style.display = 'none';
+                return;
+            }
+
+            state.csvData = [];
+            state.scenes = {};
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const rowObj = {};
+                state.csvHeaders.forEach((h, idx) => {
+                    rowObj[h] = row[idx] || '';
+                });
+                state.csvData.push(rowObj);
+                
+                const scene = rowObj[state.csvHeaders[sceneIdx]];
+                if (!scene || scene === '') continue;
+                
+                if (!state.scenes[scene]) {
+                    state.scenes[scene] = { 
+                        images: [], 
+                        bestImageIdx: 0, 
+                        maxQuality: -1,
+                        isExpanded: false
+                    };
+                }
+                
+                const quality = qualityIdx !== -1 ? parseFloat(rowObj[state.csvHeaders[qualityIdx]] || '0') : 0;
+                let cropFilename = rowObj[state.csvHeaders[filenameIdx]];
+                if (cropPathIdx !== -1 && rowObj[state.csvHeaders[cropPathIdx]]) {
+                    const parts = rowObj[state.csvHeaders[cropPathIdx]].replace(/\\/g, '/').split('/');
+                    cropFilename = parts[parts.length - 1];
+                }
+                
+                const currentSpecies = (speciesIdx !== -1 ? rowObj[state.csvHeaders[speciesIdx]] : 'Unknown') || 'Unknown';
+                
+                const imgData = {
+                    cropFilename: cropFilename,
+                    quality: quality,
+                    identifiedSpecies: currentSpecies !== 'Unknown' ? currentSpecies : '',
+                    currentSpecies: currentSpecies,
+                    lastResults: state.cache[cropFilename] || null,
+                    rowObj: rowObj
+                };
+                
+                state.scenes[scene].images.push(imgData);
+                const currentIdx = state.scenes[scene].images.length - 1;
+                
+                if (quality > state.scenes[scene].maxQuality) {
+                    state.scenes[scene].maxQuality = quality;
+                    state.scenes[scene].bestImageIdx = currentIdx;
+                }
+            }
+
+            renderList();
+            if (typeof updateStats === 'function') updateStats();
+            elements.batchAnalyzeBtn.disabled = false;
+            elements.saveBtn.disabled = false;
+            elements.globalLoader.style.display = 'none';
+            showToast("成功加载 Kestrel 目录！");
+            
+        } catch (error) {
+            console.error(error);
+            elements.globalLoader.style.display = 'none';
+            if (error.name !== 'AbortError') alert("加载失败: " + error.message);
+        }
+    });
+
+    async function getImageUrl(filename) {
+        try {
+            const fileHandle = await state.cropDirHandle.getFileHandle(filename);
+            const file = await fileHandle.getFile();
+            return URL.createObjectURL(file);
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async function getFileBlob(filename) {
+        const fileHandle = await state.cropDirHandle.getFileHandle(filename);
+        return await fileHandle.getFile();
+    }
+    
+    function createRowHTML(imgData, sceneId, isSubRow = false, idx = 0) {
+        const idPrefix = isSubRow ? `sub-${sceneId}-${idx}` : `scene-${sceneId}`;
+        const metaText = isSubRow ? `Quality: ${imgData.quality.toFixed(2)}` : `Scene #${sceneId} | 总数 ${state.scenes[sceneId].images.length}张`;
+        const expandBtn = !isSubRow && state.scenes[sceneId].images.length > 1 
+            ? `<button class="expand-btn" onclick="toggleExpand('${sceneId}')">展开 (余 ${state.scenes[sceneId].images.length - 1}张)</button>` 
+            : '';
+            
+        return `
+            <div class="row-layout ${isSubRow ? 'sub-row' : 'scene-header'}">
+                <div class="img-wrapper">
+                    <img id="img-${idPrefix}" src="" alt="${idPrefix}">
+                    <div class="meta-badge">${metaText}</div>
+                </div>
+                <div class="row-body">
+                    <div class="tags" id="tags-${idPrefix}"></div>
+                    <div class="action-row">
+                        <div class="autocomplete-wrapper">
+                            <input type="text" class="autocomplete-input" id="input-${idPrefix}" placeholder="拼音检索定种..." autocomplete="off">
+                            <div class="autocomplete-dropdown" id="dropdown-${idPrefix}"></div>
+                        </div>
+                        <button class="online-btn" onclick="analyzeImage('${sceneId}', '${imgData.cropFilename}', '${idPrefix}', false)">🔍 离线分析</button>
+                        <button class="online-btn" onclick="analyzeImage('${sceneId}', '${imgData.cropFilename}', '${idPrefix}', true)">🌐 在线复核</button>
+                        ${expandBtn}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderList() {
+        elements.listContainer.innerHTML = '';
+        Object.keys(state.scenes).forEach(sceneId => {
+            const scene = state.scenes[sceneId];
+            if (scene.images.length === 0) return;
+            
+            const bestImg = scene.images[scene.bestImageIdx];
+            
+            const group = document.createElement('div');
+            group.className = 'scene-group';
+            group.dataset.scene = sceneId;
+            
+            // Parent Row
+            let html = createRowHTML(bestImg, sceneId, false);
+            
+            // Sub Rows
+            html += `<div class="sub-rows" id="subrows-${sceneId}">`;
+            scene.images.forEach((img, idx) => {
+                if (idx !== scene.bestImageIdx) {
+                    html += createRowHTML(img, sceneId, true, idx);
+                }
+            });
+            html += `</div>`;
+            
+            group.innerHTML = html;
+            elements.listContainer.appendChild(group);
+            
+            // Init Parent
+            initRowLogic(sceneId, bestImg, `scene-${sceneId}`, true);
+            
+            // Init Subs
+            scene.images.forEach((img, idx) => {
+                if (idx !== scene.bestImageIdx) {
+                    initRowLogic(sceneId, img, `sub-${sceneId}-${idx}`, false);
+                }
+            });
+        });
+    }
+
+    function initRowLogic(sceneId, imgData, idPrefix, isParent) {
+        // Load Image
+        getImageUrl(imgData.cropFilename).then(url => {
+            if (url) document.getElementById(`img-${idPrefix}`).src = url;
+        });
+        
+        // Setup tags
+        if (imgData.identifiedSpecies) {
+            selectSpecies(sceneId, imgData, idPrefix, imgData.identifiedSpecies, isParent);
+        } else {
+            undoSelection(sceneId, imgData, idPrefix, isParent);
+        }
+        
+        // Setup Autocomplete
+        const input = document.getElementById(`input-${idPrefix}`);
+        const dropdown = document.getElementById(`dropdown-${idPrefix}`);
+        
+        input.addEventListener('input', (e) => {
+            const val = e.target.value.trim().toLowerCase();
+            dropdown.innerHTML = '';
+            
+            if (!val) {
+                dropdown.style.display = 'none';
+                return;
+            }
+            
+            const matches = state.chinaBirdsList.filter(b => 
+                (b.pinyin && b.pinyin.toLowerCase().startsWith(val)) || 
+                (b.chinese && b.chinese.includes(val)) ||
+                (b.scientific && b.scientific.toLowerCase().includes(val))
+            ).slice(0, 10);
+            
+            if (matches.length > 0) {
+                matches.forEach((m) => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerHTML = `${m.chinese} <span style="color:#64748b;font-size:0.8em">(${m.scientific})</span>`;
+                    div.addEventListener('click', () => {
+                        selectSpecies(sceneId, imgData, idPrefix, m.chinese, m.family, isParent);
+                        input.value = '';
+                        dropdown.style.display = 'none';
+                    });
+                    dropdown.appendChild(div);
+                });
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (e.target !== input && e.target !== dropdown) {
+                dropdown.style.display = 'none';
+            }
+        });
+    }
+
+    window.toggleExpand = function(sceneId) {
+        const subrows = document.getElementById(`subrows-${sceneId}`);
+        const scene = state.scenes[sceneId];
+        scene.isExpanded = !scene.isExpanded;
+        if (scene.isExpanded) {
+            subrows.classList.add('expanded');
+        } else {
+            subrows.classList.remove('expanded');
+        }
+    };
+
+    function selectSpecies(sceneId, imgData, idPrefix, chineseName, family, isParent) {
+        imgData.identifiedSpecies = chineseName;
+        imgData.identifiedFamily = family || 'Unknown';
+        
+        // If parent is selected, we could optionally apply to all, but the CSV save logic handles fallback.
+        // Visually updating all children might be confusing, so let's keep it scoped.
+        // Wait, the user specifically wants: "Identifying on Scene row applies to all images by default."
+        // We handle this during CSV save: if child has no identifiedSpecies, use parent's.
+        
+        const tagsContainer = document.getElementById(`tags-${idPrefix}`);
+        if (!tagsContainer) return;
+        const tag = document.createElement('div');
+        tag.className = 'tag selected';
+        tag.title = '点击撤销选择';
+        
+        tag.innerHTML = `
+            <div class="tag-info" style="align-items:center; justify-content:center;">
+                <div class="tag-name" style="margin-bottom:0">${chineseName}</div>
+                <div class="tag-score-text" style="margin-top:4px">✖ 撤销选择</div>
+            </div>
+        `;
+        tag.addEventListener('click', () => undoSelection(sceneId, imgData, idPrefix, isParent));
+        
+        tagsContainer.innerHTML = '';
+        tagsContainer.appendChild(tag);
+        
+        const wrapper = document.getElementById(`img-${idPrefix}`).parentElement;
+        if (!wrapper.querySelector('.status-badge')) {
+            const status = document.createElement('div');
+            status.className = 'status-badge';
+            status.textContent = '已定种';
+            wrapper.appendChild(status);
+        }
+        
+        requestCsvSave();
+        if (typeof updateStats === 'function') updateStats();
+    }
+
+    function undoSelection(sceneId, imgData, idPrefix, isParent) {
+        imgData.identifiedSpecies = '';
+        imgData.identifiedFamily = 'Unknown';
+        const wrapper = document.getElementById(`img-${idPrefix}`).parentElement;
+        const status = wrapper.querySelector('.status-badge');
+        if (status) status.remove();
+        
+        if (imgData.lastResults && imgData.lastResults.length > 0) {
+            renderTags(sceneId, imgData, idPrefix, imgData.lastResults, isParent);
+        } else {
+            const tagsContainer = document.getElementById(`tags-${idPrefix}`);
+            tagsContainer.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;margin-top:0.5rem">等待分析...</div>';
+        }
+        
+        requestCsvSave();
+        if (typeof updateStats === 'function') updateStats();
+    }
+
+    let cacheSaveTimeout = null;
+    function requestCacheSave() {
+        if (cacheSaveTimeout) clearTimeout(cacheSaveTimeout);
+        cacheSaveTimeout = setTimeout(async () => {
+            if (!state.kestrelDirHandle) return;
+            try {
+                const cacheHandle = await state.kestrelDirHandle.getFileHandle('tagger_cache.json', {create: true});
+                const cacheWritable = await cacheHandle.createWritable();
+                await cacheWritable.write(JSON.stringify(state.cache));
+                await cacheWritable.close();
+            } catch (e) {
+                console.warn("Failed to auto-save cache", e);
+            }
+        }, 1000);
+    }
+
+    function renderTags(sceneId, imgData, idPrefix, results, isParent) {
+        imgData.lastResults = results;
+        state.cache[imgData.cropFilename] = results; 
+        requestCacheSave();
+        
+        const container = document.getElementById(`tags-${idPrefix}`);
+        if (!container) return; // FIX for null element when bestImg isn't rendered as sub-row
+        
+        container.innerHTML = '';
+        
+        results.forEach(res => {
+            const name = res.taxon.preferred_common_name || res.taxon.name;
+            const scoreNum = res.score;
+            const scoreStr = res.score.toFixed(1) + '%';
+            
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            if (!res.is_chinese_bird) tag.classList.add('online'); 
+            
+            let photoUrl = '';
+            if (res.taxon.default_photo) {
+                photoUrl = res.taxon.default_photo.medium_url || res.taxon.default_photo.square_url || '';
+            }
+            
+            tag.innerHTML = `
+                <div class="tag-img-wrapper" style="display:${photoUrl ? 'block' : 'none'}">
+                    <img class="tag-img" src="${photoUrl}" alt="${name}">
+                    <div class="tag-badge" style="display:${res.is_chinese_bird ? 'block' : 'none'}">CN 中国鸟类</div>
+                </div>
+                <div class="tag-info">
+                    <div class="tag-name">${name}</div>
+                    <div class="tag-sci">${res.taxon.name}</div>
+                    <div class="tag-score-row">
+                        <span class="tag-score-text">置信度: ${scoreStr}</span>
+                    </div>
+                    <div class="tag-score-bar-bg">
+                        <div class="tag-score-bar" style="width: ${scoreNum}%"></div>
+                    </div>
+                </div>
+            `;
+            
+            tag.addEventListener('click', () => {
+                selectSpecies(sceneId, imgData, idPrefix, name, res.taxon.family, isParent);
+            });
+            container.appendChild(tag);
+        });
+    }
+
+    window.analyzeImage = async function(sceneId, filename, idPrefix, isOnline) {
+        const scene = state.scenes[sceneId];
+        // Find imgData. If parent row, imgData is the bestImg. But wait, if parent row and bestImg are analyzed independently, they share the same cropFilename.
+        // Let's find all imgData objects that have this filename and update them so UI stays in sync.
+        const targets = scene.images.filter(img => img.cropFilename === filename);
+        if (targets.length === 0) return;
+        
+        let token = '';
+        if (isOnline) {
+            token = elements.apiToken.value.trim();
+            if (!token) {
+                alert("请在顶部输入 iNaturalist Token！");
+                return;
+            }
+        }
+        
+        elements.globalLoader.style.display = 'flex';
+        elements.loaderText.textContent = isOnline ? '在线复核中...' : '离线分析中...';
+
+        try {
+            const province = elements.provinceSelect.value;
+            const blob = await getFileBlob(filename);
+            const formData = new FormData();
+            formData.append('image', blob, filename);
+            if (province) formData.append('province', province);
+            if (isOnline) formData.append('token', token);
+            
+            const url = isOnline ? '/api/identify/online' : '/api/identify';
+            const res = await fetch(url, { method: 'POST', body: formData });
+            if (!res.ok) throw new Error(await res.text());
+            
+            const data = await res.json();
+            if (data.results && data.results.length > 0) {
+                let mappedResults = data.results.slice(0, 3);
+                if (isOnline) {
+                    mappedResults = mappedResults.map(r => {
+                        let rawScore = r.combined_score || r.vision_score || r.score || 0;
+                        
+                        let familyStr = 'Unknown';
+                        const localBird = state.chinaBirdsList.find(b => b.scientific === r.taxon.name);
+                        if (localBird) {
+                            familyStr = localBird.family;
+                        }
+                        
+                        return {
+                            score: rawScore > 1 ? rawScore : rawScore * 100,
+                            is_chinese_bird: !!localBird, // Use real local info
+                            taxon: {
+                                name: r.taxon.name,
+                                preferred_common_name: r.taxon.preferred_common_name || (localBird ? localBird.chinese : r.taxon.name),
+                                default_photo: r.taxon.default_photo,
+                                family: familyStr
+                            }
+                        };
+                    });
+                } else {
+                    // map offline results to have generic structure
+                    mappedResults = mappedResults.map(r => ({
+                        score: r.score,
+                        is_chinese_bird: r.is_chinese_bird,
+                        taxon: {
+                            name: r.taxon.name,
+                            preferred_common_name: r.taxon.preferred_common_name || r.taxon.name,
+                            default_photo: r.taxon.default_photo,
+                            family: r.taxon.family
+                        }
+                    }));
+                }
+                
+                // Update all instances of this image in UI
+                targets.forEach(img => {
+                    const idx = scene.images.indexOf(img);
+                    if (scene.bestImageIdx === idx) {
+                        renderTags(sceneId, img, `scene-${sceneId}`, mappedResults, true);
+                    } else {
+                        renderTags(sceneId, img, `sub-${sceneId}-${idx}`, mappedResults, false);
+                    }
+                });
+            } else {
+                alert("未找到识别结果。");
+            }
+        } catch (e) {
+            alert("分析失败: " + e.message);
+        } finally {
+            elements.globalLoader.style.display = 'none';
+        }
+    };
+
+    elements.batchAnalyzeBtn.addEventListener('click', async () => {
+        const province = elements.provinceSelect.value;
+        const imagesToProcess = [];
+        
+        Object.keys(state.scenes).forEach(sceneId => {
+            state.scenes[sceneId].images.forEach(img => {
+                if (!img.identifiedSpecies && img.currentSpecies === 'Unknown') {
+                    imagesToProcess.push({ sceneId, imgData: img });
+                }
+            });
+        });
+        
+        if (imagesToProcess.length === 0) {
+            showToast("没有需要分析的场景。");
+            return;
+        }
+
+        elements.globalLoader.style.display = 'flex';
+        elements.batchAnalyzeBtn.disabled = true;
+        
+        for (let i = 0; i < imagesToProcess.length; i++) {
+            const item = imagesToProcess[i];
+            elements.loaderText.textContent = `批量分析中: ${i+1}/${imagesToProcess.length}`;
+            
+            try {
+                const blob = await getFileBlob(item.imgData.cropFilename);
+                const formData = new FormData();
+                formData.append('image', blob, item.imgData.cropFilename);
+                if (province) formData.append('province', province);
+                
+                const res = await fetch('/api/identify', { method: 'POST', body: formData });
+                if (res.ok) {
+                    const data = await res.json();
+                    const mappedResults = data.results.slice(0, 3).map(r => ({
+                        score: r.score,
+                        is_chinese_bird: r.is_chinese_bird,
+                        taxon: {
+                            name: r.taxon.name,
+                            preferred_common_name: r.taxon.preferred_common_name || r.taxon.name,
+                            default_photo: r.taxon.default_photo,
+                            family: r.taxon.family
+                        }
+                    }));
+                    
+                    const scene = state.scenes[item.sceneId];
+                    const idx = scene.images.indexOf(item.imgData);
+                    if (scene.bestImageIdx === idx) {
+                        renderTags(item.sceneId, item.imgData, `scene-${item.sceneId}`, mappedResults, true);
+                    } else {
+                        renderTags(item.sceneId, item.imgData, `sub-${item.sceneId}-${idx}`, mappedResults, false);
+                    }
+                }
+            } catch (e) {
+                console.error(`Failed`, e);
+            }
+        }
+        
+        elements.globalLoader.style.display = 'none';
+        elements.batchAnalyzeBtn.disabled = false;
+        showToast("批量离线分析完成！");
+        requestCsvSave();
+    });
+
+    let csvSaveTimeout = null;
+    function requestCsvSave() {
+        if (csvSaveTimeout) clearTimeout(csvSaveTimeout);
+        csvSaveTimeout = setTimeout(() => {
+            saveToKestrel(true);
+        }, 1500);
+    }
+
+    async function saveToKestrel(silent = false) {
+        if (!state.csvFileHandle) return;
+        
+        if (!silent) {
+            elements.globalLoader.style.display = 'flex';
+            elements.loaderText.textContent = '回填数据...';
+        }
+        
+        try {
+            let actualSpeciesHeader = state.csvHeaders.find(h => h.trim().toLowerCase() === 'species');
+            if (!actualSpeciesHeader) {
+                actualSpeciesHeader = 'species';
+                state.csvHeaders.push(actualSpeciesHeader);
+            }
+            
+            let actualFamilyHeader = state.csvHeaders.find(h => h.trim().toLowerCase() === 'family');
+            if (!actualFamilyHeader) {
+                actualFamilyHeader = 'family';
+                state.csvHeaders.push(actualFamilyHeader);
+            }
+            
+            let cropsJsonHeader = state.csvHeaders.find(h => h.trim().toLowerCase() === 'crops_json');
+            
+            // Map identified species to each file in csvData
+            Object.keys(state.scenes).forEach(sceneId => {
+                const scene = state.scenes[sceneId];
+                const parentIdentified = scene.images[scene.bestImageIdx].identifiedSpecies;
+                const parentFamily = scene.images[scene.bestImageIdx].identifiedFamily || 'Unknown';
+                
+                scene.images.forEach(img => {
+                    // Use explicitly identified species. No implicit fallback to parent to keep consistency with stats.
+                    const finalSpecies = img.identifiedSpecies;
+                    const finalFamily = img.identifiedFamily || 'Unknown';
+                    
+                    if (finalSpecies) {
+                        img.rowObj[actualSpeciesHeader] = finalSpecies;
+                        img.rowObj[actualFamilyHeader] = finalFamily;
+                        
+                        // Kestrel Viewer also reads species from inside crops_json payload!
+                        if (cropsJsonHeader && img.rowObj[cropsJsonHeader]) {
+                            try {
+                                const cropsArr = JSON.parse(img.rowObj[cropsJsonHeader]);
+                                if (Array.isArray(cropsArr)) {
+                                    cropsArr.forEach(c => {
+                                        c['species'] = finalSpecies;
+                                        c['family'] = finalFamily;
+                                    });
+                                    img.rowObj[cropsJsonHeader] = JSON.stringify(cropsArr);
+                                }
+                            } catch(err) {
+                                console.warn('Failed to parse crops_json during save', err);
+                            }
+                        }
+                    } else {
+                        // Undo logic if species was removed
+                        if (img.rowObj[actualSpeciesHeader]) img.rowObj[actualSpeciesHeader] = '';
+                        if (img.rowObj[actualFamilyHeader]) img.rowObj[actualFamilyHeader] = 'Unknown';
+                    }
+                });
+            });
+            
+            const newCsvStr = stringifyCSV(state.csvHeaders, state.csvData);
+            
+            // Write back
+            const writable = await state.csvFileHandle.createWritable();
+            await writable.write(newCsvStr);
+            await writable.close();
+            
+            // Write cache
+            try {
+                if (state.kestrelDirHandle) {
+                    const cacheHandle = await state.kestrelDirHandle.getFileHandle('tagger_cache.json', {create: true});
+                    const cacheWritable = await cacheHandle.createWritable();
+                    await cacheWritable.write(JSON.stringify(state.cache));
+                    await cacheWritable.close();
+                }
+            } catch (e) {
+                console.warn("Failed to write cache", e);
+            }
+            
+            if (!silent) showToast("✅ 成功保存并回填至 kestrel_database.csv!");
+        } catch (e) {
+            console.error(e);
+            if (!silent) alert("保存失败: " + e.message);
+        } finally {
+            if (!silent) elements.globalLoader.style.display = 'none';
+        }
+    }
+
+    elements.saveBtn.addEventListener('click', async () => {
+        await saveToKestrel(false);
+    });
+
+</script>
+</body>
+</html>
