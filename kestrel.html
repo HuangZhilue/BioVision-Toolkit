@@ -427,6 +427,7 @@
             const sceneIdx = findCol(['scene_count', 'scene', 'scene_id']);
             const qualityIdx = findCol(['quality']);
             const speciesIdx = findCol(['species']);
+            const familyIdx = findCol(['family']);
             const cropPathIdx = findCol(['crop_path']);
             
             if (filenameIdx === -1 || sceneIdx === -1) {
@@ -466,11 +467,13 @@
                 }
                 
                 const currentSpecies = (speciesIdx !== -1 ? rowObj[state.csvHeaders[speciesIdx]] : 'Unknown') || 'Unknown';
+                const currentFamily = (familyIdx !== -1 ? rowObj[state.csvHeaders[familyIdx]] : 'Unknown') || 'Unknown';
                 
                 const imgData = {
                     cropFilename: cropFilename,
                     quality: quality,
                     identifiedSpecies: currentSpecies !== 'Unknown' ? currentSpecies : '',
+                    identifiedFamily: currentFamily !== 'Unknown' && currentFamily !== 'true' && currentFamily !== true ? currentFamily : 'Unknown',
                     currentSpecies: currentSpecies,
                     lastResults: state.cache[cropFilename] || null,
                     rowObj: rowObj
@@ -590,7 +593,14 @@
         
         // Setup tags
         if (imgData.identifiedSpecies) {
-            selectSpecies(sceneId, imgData, idPrefix, imgData.identifiedSpecies, isParent);
+            let family = imgData.identifiedFamily;
+            if (!family || family === 'Unknown' || family === 'true' || family === true) {
+                const birdInfo = state.chinaBirdsList.find(b => b.chinese === imgData.identifiedSpecies);
+                if (birdInfo) {
+                    family = birdInfo.family;
+                }
+            }
+            selectSpecies(sceneId, imgData, idPrefix, imgData.identifiedSpecies, family, isParent);
         } else {
             undoSelection(sceneId, imgData, idPrefix, isParent);
         }

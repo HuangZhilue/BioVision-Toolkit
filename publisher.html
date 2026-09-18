@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilibili Publisher</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface-color: rgba(30, 41, 59, 0.7);
+            --primary-color: #10b981;
+            --primary-hover: #059669;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-radius: 12px;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            padding: 1rem 2rem;
+            background: var(--surface-color);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar .title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-right: 2rem;
+            color: #38bdf8;
+        }
+
+        button {
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: inherit;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        button.primary {
+            background: var(--primary-color);
+            color: #000;
+            border: none;
+        }
+
+        button.primary:hover:not(:disabled) {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .container {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .card {
+            background: var(--surface-color);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        textarea:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .path-display {
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.4);
+            color: var(--text-muted);
+            font-family: monospace;
+            font-size: 0.9rem;
+            border: 1px dashed var(--border-color);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .log-area {
+            height: 150px;
+            overflow-y: auto;
+            background: #000;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            border: 1px solid var(--border-color);
+        }
+
+        .log-area div {
+            margin-bottom: 4px;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .log-success {
+            color: #10b981;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #334155;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .copy-btn {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="topbar">
+        <div class="title">Bilibili Publisher</div>
+        <a href="/" style="color:var(--text-muted); text-decoration: none; font-size: 0.9rem;">← 返回 BioCLIP</a>
+        <a href="/kestrel"
+            style="color:var(--text-muted); text-decoration: none; font-size: 0.9rem; margin-left:1rem;">← 返回 Kestrel
+            Tagger</a>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">1. 选择工作目录</div>
+            <div style="display: flex; gap: 1rem; flex-direction: column;">
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button id="srcBtn" class="primary">选择源文件夹 (含成片)</button>
+                    <div id="srcPath" class="path-display" style="flex:1;">未选择源文件夹</div>
+                </div>
+            </div>
+            <div style="margin-top: 1rem;">
+                <label style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem; color: #cbd5e1; font-size: 0.95rem;">
+                    <input type="checkbox" id="autoCompress" checked style="width: 1rem; height: 1rem;">
+                    自动无损压缩超过20MB大小的图片至19MB内 (保留全部EXIF信息)
+                </label>
+            </div>
+            <div class="action-row" style="margin-top: 0.5rem;">
+                <button id="generateBtn" class="primary" disabled
+                    style="width: 100%; padding: 0.8rem; font-size: 1.1rem;">一键处理并复制成片</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">2. 生成文案提取结果</div>
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: end;">
+                    <label>标题格式: 【影像存档】yyyy/MM/dd，地点</label>
+                    <button class="copy-btn" onclick="copyText('titleOutput')">复制标题</button>
+                </div>
+                <input type="text" id="titleOutput" placeholder="等待生成...">
+            </div>
+            <div class="form-group" style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: end;">
+                    <label>正文标签: #地点# #鸟种名称#</label>
+                    <button class="copy-btn" onclick="copyText('contentOutput')">复制标签</button>
+                </div>
+                <textarea id="contentOutput" rows="4" placeholder="等待生成..."></textarea>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">执行日志</div>
+            <div class="log-area" id="logArea">
+                <div style="color: var(--text-muted);">等待操作...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">操作成功</div>
+
+    <script>
+        let srcHandle = null;
+        let destHandle = null;
+
+        const elements = {
+            srcBtn: document.getElementById('srcBtn'),
+            generateBtn: document.getElementById('generateBtn'),
+            srcPath: document.getElementById('srcPath'),
+            logArea: document.getElementById('logArea'),
+            titleOutput: document.getElementById('titleOutput'),
+            contentOutput: document.getElementById('contentOutput'),
+            toast: document.getElementById('toast'),
+            autoCompress: document.getElementById('autoCompress')
+        };
+
+        function log(msg, type = '') {
+            const div = document.createElement('div');
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+            if (type === 'error') div.className = 'log-error';
+            if (type === 'success') div.className = 'log-success';
+            elements.logArea.appendChild(div);
+            elements.logArea.scrollTop = elements.logArea.scrollHeight;
+        }
+
+        function showToast(msg) {
+            elements.toast.textContent = msg;
+            elements.toast.classList.add('show');
+            setTimeout(() => elements.toast.classList.remove('show'), 3000);
+        }
+
+        async function compressImage(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            const response = await fetch('/api/compress', {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) {
+                throw new Error(`后端压缩失败: HTTP ${response.status}`);
+            }
+            return await response.blob();
+        }
+
+        window.copyText = function (id) {
+            const el = document.getElementById(id);
+            if (!el.value) return;
+            el.select();
+            document.execCommand('copy');
+            showToast("已复制到剪贴板！");
+        };
+
+        elements.srcBtn.addEventListener('click', async () => {
+            try {
+                srcHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                elements.srcPath.textContent = srcHandle.name;
+                checkReady();
+                log(`已选择源文件夹: ${srcHandle.name}`, 'success');
+            } catch (e) {
+                if (e.name !== 'AbortError') log("选择源文件夹失败: " + e.message, 'error');
+            }
+        });
+
+        function checkReady() {
+            if (srcHandle) {
+                elements.generateBtn.disabled = false;
+            }
+        }
+
+        function parseCSV(text) {
+            const lines = [];
+            let currentLine = [];
+            let currentField = '';
+            let inQuotes = false;
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const nextChar = text[i + 1];
+
+                if (char === '"' && inQuotes && nextChar === '"') {
+                    currentField += '"';
+                    i++;
+                } else if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    currentLine.push(currentField);
+                    currentField = '';
+                } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                    if (char === '\r' && nextChar === '\n') i++;
+                    currentLine.push(currentField);
+                    lines.push(currentLine);
+                    currentLine = [];
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            if (currentField !== '' || currentLine.length > 0) {
+                currentLine.push(currentField);
+                lines.push(currentLine);
+            }
+            return lines.filter(l => l.length > 1 || (l.length === 1 && l[0].trim() !== ''));
+        }
+
+        elements.generateBtn.addEventListener('click', async () => {
+            elements.generateBtn.disabled = true;
+            elements.logArea.innerHTML = '';
+            log("开始处理...");
+
+            try {
+                // 1. Find all JPGs in root of source dir (the 'final' images)
+                const imageFiles = [];
+                for await (const entry of srcHandle.values()) {
+                    if (entry.kind === 'file' && /\.(jpe?g|png)$/i.test(entry.name)) {
+                        imageFiles.push(entry.name);
+                    }
+                }
+
+                if (imageFiles.length === 0) {
+                    log("源文件夹根目录中未找到成片 (jpg/jpeg)。", "error");
+                    return;
+                }
+                log(`找到 ${imageFiles.length} 张成片。`);
+
+                // 2. Extract Dates from filenames
+                const dates = new Set();
+                imageFiles.forEach(f => {
+                    const match = f.match(/^(\d{4})(\d{2})(\d{2})-/);
+                    if (match) {
+                        dates.add(`${match[1]}/${match[2]}/${match[3]}`);
+                    }
+                });
+                const dateStr = Array.from(dates).sort().join(', ') || "未知日期";
+                log(`解析到日期: ${dateStr}`);
+
+                // 3. Extract species tags
+                let speciesSet = new Set();
+                let parsedFromCSV = false;
+
+                try {
+                    const kestrelDir = await srcHandle.getDirectoryHandle('.kestrel');
+                    const csvFile = await kestrelDir.getFileHandle('kestrel_database.csv');
+                    const fileData = await (await csvFile.getFile()).text();
+                    const rows = parseCSV(fileData);
+                    const headers = rows[0].map(h => h.trim().toLowerCase());
+                    const fileIdx = headers.indexOf('filename');
+                    const speciesIdx = headers.indexOf('species');
+
+                    if (fileIdx >= 0 && speciesIdx >= 0) {
+                        for (let i = 1; i < rows.length; i++) {
+                            const f = rows[i][fileIdx];
+                            const sp = rows[i][speciesIdx];
+                            if (f && sp && sp !== 'Unknown' && sp !== '') {
+                                if (imageFiles.includes(f)) {
+                                    speciesSet.add(sp);
+                                }
+                            }
+                        }
+                        parsedFromCSV = true;
+                        log(`已通过 kestrel_database.csv 读取鸟种标签。`);
+                    }
+                } catch (e) {
+                    log("未找到 kestrel_database.csv，尝试读取 XMP 文件...");
+                }
+
+                if (!parsedFromCSV) {
+                    for (const imgName of imageFiles) {
+                        const xmpName = imgName.replace(/\.[^.]+$/, '.xmp');
+                        try {
+                            const xmpHandle = await srcHandle.getFileHandle(xmpName);
+                            const text = await (await xmpHandle.getFile()).text();
+                            // 简单正则匹配 <rdf:li> 内容。考虑到可能有其他软件写入的无关tag，但这符合用户的要求。
+                            const matches = [...text.matchAll(/<rdf:li>([^<]+)<\/rdf:li>/g)];
+                            matches.forEach(m => {
+                                const tag = m[1].trim();
+                                if (tag) speciesSet.add(tag);
+                            });
+                        } catch (err) {
+                            // ignore missing xmp
+                        }
+                    }
+                    log(`已通过读取 XMP 文件提取标签。`);
+                }
+
+                // 组装文本
+                const tagsStr = Array.from(speciesSet).map(s => `#${s}#`).join('');
+                const titleStr = `【影像存档】${dateStr}，地点`;
+
+                elements.titleOutput.value = titleStr;
+                elements.contentOutput.value = tagsStr;
+
+                // 4. Copy files
+                log("正在源文件夹内创建或打开 publish 文件夹...");
+                destHandle = await srcHandle.getDirectoryHandle('publish', { create: true });
+
+                log("正在清理 publish 文件夹中的历史遗留文件...");
+                for await (const entry of destHandle.values()) {
+                    try {
+                        await destHandle.removeEntry(entry.name, { recursive: entry.kind === 'directory' });
+                    } catch (e) {
+                        log(`清理旧文件 ${entry.name} 失败`, 'error');
+                    }
+                }
+
+                log("正在复制成片到 publish 文件夹...");
+                let copied = 0;
+                for (const imgName of imageFiles) {
+                    try {
+                        const fileHandle = await srcHandle.getFileHandle(imgName);
+                        const file = await fileHandle.getFile();
+                        let finalFile = file;
+
+                        if (elements.autoCompress.checked && file.size > 20 * 1024 * 1024) {
+                            log(`发现超大图片 ${imgName} (${(file.size/1024/1024).toFixed(2)}MB)，正在保留 EXIF 并自动无损压缩...`);
+                            finalFile = await compressImage(file);
+                            log(`压缩完成: ${(finalFile.size/1024/1024).toFixed(2)}MB`, 'success');
+                        }
+
+                        const destFileHandle = await destHandle.getFileHandle(imgName, { create: true });
+                        const writable = await destFileHandle.createWritable();
+                        await writable.write(finalFile);
+                        await writable.close();
+                        copied++;
+                    } catch (e) {
+                        log(`处理 ${imgName} 失败: ${e.message}`, 'error');
+                    }
+                }
+
+                log(`处理完成！成功复制 ${copied}/${imageFiles.length} 个文件。`, 'success');
+                showToast("处理成功！");
+
+            } catch (e) {
+                log(`发生错误: ${e.message}`, 'error');
+            } finally {
+                elements.generateBtn.disabled = false;
+            }
+        });
+
+    </script>
+</body>
+
+</html>

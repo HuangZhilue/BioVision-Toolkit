@@ -6,8 +6,9 @@ os.environ["HF_HOME"] = os.path.join(os.getcwd(), "models")
 os.environ["TORCH_HOME"] = os.path.join(os.getcwd(), "models")
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form, BackgroundTasks
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from PIL import Image
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
@@ -146,9 +147,42 @@ async def read_kestrel():
     with open("kestrel.html", "r", encoding="utf-8") as f:
         return f.read()
 
+@app.get("/publisher", response_class=HTMLResponse)
+async def read_publisher():
+    with open("publisher.html", "r", encoding="utf-8") as f:
+        return f.read()
+
 @app.get("/api/birds")
 async def get_birds():
     return china_birds_db
+
+@app.post("/api/compress")
+async def compress_image(image: UploadFile = File(...)):
+    contents = await image.read()
+    max_size = 19 * 1024 * 1024
+    
+    if len(contents) <= max_size:
+        return Response(content=contents, media_type="image/jpeg")
+        
+    img = Image.open(io.BytesIO(contents))
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
+        
+    quality = 99
+    while quality >= 10:
+        output = io.BytesIO()
+        save_kwargs = {'format': 'JPEG', 'quality': quality}
+        if 'exif' in img.info:
+            save_kwargs['exif'] = img.info['exif']
+        if 'icc_profile' in img.info:
+            save_kwargs['icc_profile'] = img.info['icc_profile']
+            
+        img.save(output, **save_kwargs)
+        if len(output.getvalue()) <= max_size:
+            return Response(content=output.getvalue(), media_type="image/jpeg")
+        quality -= 4
+        
+    return Response(content=output.getvalue(), media_type="image/jpeg")
 
 @app.post("/api/identify")
 async def identify_image(image: UploadFile = File(...), province: Optional[str] = Form(None), lat: Optional[str] = Form(None), lng: Optional[str] = Form(None)):
