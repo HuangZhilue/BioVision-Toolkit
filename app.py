@@ -22,9 +22,6 @@ import random
 import time
 import gc
 from apscheduler.schedulers.background import BackgroundScheduler
-import build_china_birds
-import update_regions
-import download_images
 
 
 # Monkey-patch torch.compile on Windows, as it's not supported and pybioclip tries to use it unconditionally
@@ -90,12 +87,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import subprocess
+
 def run_maintenance_task():
     print("Starting automated maintenance task...")
     try:
-        build_china_birds.build_database()
-        update_regions.main()
-        download_images.main()
+        subprocess.run(["python", "build_database_perfect.py"], check=True)
+        subprocess.run(["python", "download_images.py"], check=True)
         load_china_birds_db()
         print("Automated maintenance task completed successfully.")
     except Exception as e:
@@ -149,8 +147,13 @@ online_request_lock = asyncio.Lock()
 
 
 @app.get("/", response_class=HTMLResponse)
-async def read_index():
+async def read_root():
     with open("bioclip.html", "r", encoding="utf-8") as f:
+        return f.read()
+
+@app.get("/index", response_class=HTMLResponse)
+async def read_index():
+    with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
 @app.get("/kestrel", response_class=HTMLResponse)

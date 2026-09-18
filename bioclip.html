@@ -49,6 +49,7 @@
             font-weight: 700;
             background: linear-gradient(to right, #34d399, #3b82f6);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.5rem;
         }
@@ -531,77 +532,108 @@
     <style>
         .global-nav {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 58px;
+            overflow: hidden;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0 1rem;
-            z-index: 9999;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+            padding: 12px 0;
         }
+
+        .global-nav:hover {
+            width: 260px;
+            background: rgba(30, 41, 59, 0.95);
+        }
+
         .global-nav-container {
             display: flex;
-            gap: 1rem;
-            overflow-x: auto;
-            max-width: 1200px;
-            width: 100%;
-            padding: 12px 0;
-            scrollbar-width: none;
+            flex-direction: column;
+            gap: 8px;
         }
+
         .global-nav-container::-webkit-scrollbar {
             display: none;
         }
+
         .global-nav a {
             color: #94a3b8;
             text-decoration: none;
             font-size: 0.95rem;
             font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 8px;
+            padding: 10px 12px;
+            margin: 0 8px;
+            border-radius: 10px;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
             white-space: nowrap;
+            height: 44px;
         }
+
+        .global-nav a .nav-icon {
+            font-size: 1.25rem;
+            margin-right: 16px;
+            min-width: 1.25rem;
+            text-align: center;
+        }
+
+        .global-nav a .nav-text {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .global-nav:hover a .nav-text {
+            opacity: 1;
+            transition-delay: 0.1s;
+        }
+
         .global-nav a:hover {
             color: #f8fafc;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.1);
         }
+
         .global-nav a.active {
             color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-            font-weight: 600;
+            background: rgba(16, 185, 129, 0.15);
         }
+
         body {
-            padding-top: 80px !important;
+            padding-top: 20px !important;
         }
     </style>
     <div class="global-nav">
         <div class="global-nav-container">
-            <a href="bioclip.html" id="nav-bioclip">📸 AI 鸟类识别 (专业离线版)</a>
-            <a href="index.html" id="nav-index">🌐 AI 鸟类识别 (在线备用版)</a>
-            <a href="kestrel.html" id="nav-kestrel">🏷️ Kestrel 批量打标</a>
-            <a href="publisher.html" id="nav-publisher">📝 Bilibili 发布助手</a>
+            <a href="/" id="nav-bioclip"><span class="nav-icon">📸</span><span class="nav-text">AI 鸟类识别 (专业离线版)</span></a>
+            <a href="/index" id="nav-index"><span class="nav-icon">🌐</span><span class="nav-text">AI 鸟类识别 (在线备用版)</span></a>
+            <a href="/kestrel" id="nav-kestrel"><span class="nav-icon">🏷️</span><span class="nav-text">Kestrel 批量打标</span></a>
+            <a href="/publisher" id="nav-publisher"><span class="nav-icon">📝</span><span class="nav-text">Bilibili 发布助手</span></a>
         </div>
     </div>
     <script>
-        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const currentPath = window.location.pathname;
         const navIdMap = {
-            'bioclip.html': 'nav-bioclip',
-            'index.html': 'nav-index',
-            'kestrel.html': 'nav-kestrel',
-            'publisher.html': 'nav-publisher'
+            '/': 'nav-bioclip',
+            '/index': 'nav-index',
+            '/kestrel': 'nav-kestrel',
+            '/publisher': 'nav-publisher'
         };
         const activeNavId = navIdMap[currentPath];
         if (activeNavId) {
             document.getElementById(activeNavId).classList.add('active');
         }
     </script>
-    <!-- 全局导航栏结束 -->    <div class="container">
+    <!-- 全局导航栏结束 -->
+    <div class="container">
         <header>
             <h1>本地化 BioCLIP 物种识别</h1>
             <p class="subtitle">上传动植物图片，基于本地 BioCLIP 模型自动识别物种</p>
