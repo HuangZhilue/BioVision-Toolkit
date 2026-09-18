@@ -1,0 +1,51 @@
+{
+    "Fluvicola pica": {
+        "taxon_id": 17281,
+        "chinese_name": "斑水霸鹟",
+        "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/12513161/medium.jpeg",
+        "family": "Tyrannidae",
+        "provinces": []
+    },
+    "Epthianura albifrons": {
+        "taxon_id": 12651,
+        "chinese_name": "白额澳䳭",
+        "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/163060608/medium.jpg",
+        "family": "Meliphagidae",
+        "provinces": []
+    },
+    "Pternistis afer": {
+        "taxon_id": 495994,
+        "chinese_name": "红喉彩鹧鸪",
+        "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/2635250/medium.jpg",
+        "family": "Phasianidae",
+        "provinces": []
+    },
+    "Pternistis nobilis": {
+        "taxon_id": 495932,
+        "chinese_name": "艳彩鹧鸪",
+        "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/81627840/medium.jpg",
+        "family": "Phasianidae",
+        "provinces": []
+    },
+    "Turdus plebejus": {
+        "taxon_id": 12712,
+        "chinese_name": "美洲山鸫",
+        "image_url": "https://static.inaturalist.org/photos/116465028/medium.jpg",
+        "family": "Turdidae",
+        "provinces": []
+    },
+    "Turdus anthracinus": {
+        "taxon_id": 719056,
+        "chinese_name": "Sombre thrush",
+        "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/27163138/medium.jpeg",
+        "family": "Turdidae",
+        "provinces": []
+    },
+    "Turdus chiguanco": {
+        "taxon_id": 12780,
+        "chinese_name": "芝古鸫",
+        "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/174613038/medium.jpeg",
+        "family": "Turdidae",
+        "provinces": []
+    }
+}

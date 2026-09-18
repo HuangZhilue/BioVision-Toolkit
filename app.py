@@ -58,8 +58,10 @@ PROVINCE_COORDS = {
 
 # Load offline database
 china_birds_db = {}
+cached_birds_db = {}
+
 def load_china_birds_db():
-    global china_birds_db
+    global china_birds_db, cached_birds_db
     if os.path.exists("china_birds.json"):
         print("Loading offline China birds database...")
         try:
@@ -68,6 +70,15 @@ def load_china_birds_db():
             print(f"Loaded {len(china_birds_db)} birds into memory.")
         except Exception as e:
             print(f"Failed to load offline database: {e}")
+            
+    if os.path.exists("cached_birds.json"):
+        print("Loading cached global birds database...")
+        try:
+            with open("cached_birds.json", "r", encoding="utf-8") as f:
+                cached_birds_db = json.load(f)
+            print(f"Loaded {len(cached_birds_db)} cached birds into memory.")
+        except Exception as e:
+            print(f"Failed to load cached database: {e}")
 
 load_china_birds_db()
 
@@ -239,9 +250,14 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
             # Lookup in offline database
             offline_info = china_birds_db.get(sci_name)
             is_rare_in_region = False
+            is_chinese_bird = True
+            
+            if not offline_info:
+                offline_info = cached_birds_db.get(sci_name)
+                is_chinese_bird = False
             
             if offline_info:
-                if detected_province:
+                if detected_province and is_chinese_bird:
                     provinces = offline_info.get("provinces", [])
                     # Match province name (allow substring match just in case)
                     matched = any(detected_province in p or p in detected_province for p in provinces)
@@ -255,7 +271,6 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                 # Use local image path
                 image_filename = sci_name.replace(" ", "_").replace("/", "_") + ".jpg"
                 default_photo = f"/images/{image_filename}" if offline_info.get("image_url") else None
-                is_chinese_bird = True
             else:
                 # Online API Fallback
                 common_name = pred.get("common_name") or sci_name
@@ -277,6 +292,36 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                                         break
                             if match.get("default_photo") and match["default_photo"].get("medium_url"):
                                 default_photo = match["default_photo"]["medium_url"]
+                            
+                            # --- 自动积累模式 (Auto-caching) ---
+                            def auto_cache_bird(s_name, p_url, t_id, c_name, f_name):
+                                try:
+                                    if p_url:
+                                        filename = s_name.replace(" ", "_").replace("/", "_") + ".jpg"
+                                        filepath = os.path.join("offline_images", filename)
+                                        if not os.path.exists(filepath):
+                                            os.makedirs("offline_images", exist_ok=True)
+                                            img_res = requests.get(p_url, timeout=10)
+                                            if img_res.status_code == 200:
+                                                with open(filepath, 'wb') as f:
+                                                    f.write(img_res.content)
+                                    
+                                    if s_name not in china_birds_db and s_name not in cached_birds_db:
+                                        cached_birds_db[s_name] = {
+                                            "taxon_id": t_id,
+                                            "chinese_name": c_name,
+                                            "image_url": p_url,
+                                            "family": f_name,
+                                            "provinces": []
+                                        }
+                                        with open("cached_birds.json", "w", encoding="utf-8") as f:
+                                            json.dump(cached_birds_db, f, ensure_ascii=False, indent=2)
+                                        print(f"✅ 自动积累新鸟种成功: {s_name} ({c_name})")
+                                except Exception as e:
+                                    print(f"自动积累失败 {s_name}: {e}")
+
+                            asyncio.create_task(asyncio.to_thread(auto_cache_bird, sci_name, default_photo, match.get("id"), common_name, family))
+                            # -----------------------------------
                 except Exception as e:
                     print(f"API fallback failed for {sci_name}: {e}")
 

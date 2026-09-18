@@ -14,7 +14,9 @@ services:
       - ./bioclip.html:/app/bioclip.html
       - ./kestrel.html:/app/kestrel.html  
       - ./publisher.html:/app/publisher.html
-      - ./app.py:/app/app.py             
+      - ./china_birds.json:/app/china_birds.json
+      - ./cached_birds.json:/app/cached_birds.json
+      - ./app.py:/app/app.py
 
 #     networks:
 #       - 1panel-network
