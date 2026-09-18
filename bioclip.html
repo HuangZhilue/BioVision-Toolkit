@@ -669,7 +669,23 @@
             </div>
 
 
-            <h3 style="margin-bottom: 1rem; font-size: 1.1rem; margin-top: 2rem;">区域限制 (省份/定位)</h3>
+            <h3 style="margin-bottom: 1rem; font-size: 1.1rem; margin-top: 2rem;">识别分类 (可选)</h3>
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="taxonGroup" style="color: #e2e8f0; font-weight: normal;">目标生物类群</label>
+                <select id="taxonGroup" class="input-field" style="margin-top: 0.5rem;">
+                    <option value="3" selected>鸟类 (Aves) - 默认优先</option>
+                    <option value="40151">哺乳动物 (Mammalia)</option>
+                    <option value="47158">昆虫 (Insecta)</option>
+                    <option value="47119">蛛形纲 (Arachnida) - 蜘蛛/蝎子等</option>
+                    <option value="47126">植物 (Plantae)</option>
+                    <option value="47170">真菌 (Fungi) - 蘑菇等</option>
+                    <option value="1">所有动物 (Animalia)</option>
+                    <option value="">不限分类 (所有生物界)</option>
+                </select>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">您可以精确选择想要识别的生物大类。如遇无法精准识别到“种”，系统会尽量给出其所在的“属”或“科”。</p>
+            </div>
+
+            <h3 style="margin-bottom: 1rem; font-size: 1.1rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">区域限制 (省份/定位)</h3>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
                 如果指定了省份，系统将降低“该省未曾记录过”的鸟类的排名，以提高本地鸟类识别准确率。
             </p>
@@ -902,6 +918,10 @@
             if (regionSelect.value) {
                 formData.append('province', regionSelect.value);
             }
+            const taxonId = document.getElementById('taxonGroup').value;
+            if (taxonId) {
+                formData.append('taxonId', taxonId);
+            }
             if (selectedLat !== null && selectedLng !== null) {
                 formData.append('lat', selectedLat.toString());
                 formData.append('lng', selectedLng.toString());
@@ -952,6 +972,9 @@
 
                 const badgeHtml = result.is_chinese_bird ? '<div class="badge-china">🇨🇳 中国鸟类</div>' : '';
                 const rareBadge = result.is_rare_in_region ? '<div class="badge-rare">⚠️ 区域罕见</div>' : '';
+                
+                const rankMap = { 'genus': '属', 'family': '科', 'order': '目', 'class': '纲', 'phylum': '门', 'kingdom': '界', 'subspecies': '亚种' };
+                const rankText = (taxon.rank && taxon.rank !== 'species') ? `<span style="font-size: 0.7rem; background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle;">${rankMap[taxon.rank] || taxon.rank}</span>` : '';
 
 
                 return `
@@ -962,7 +985,7 @@
                             ${rareBadge}
                         </div>
                         <div class="result-info">
-                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}</div>
+                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}${rankText}</div>
                             <div class="common-name">${taxon.name}</div>
                             
                             <div class="score-bar">
@@ -1014,6 +1037,10 @@
             if (regionSelect.value) {
                 formData.append('province', regionSelect.value);
             }
+            const taxonId = document.getElementById('taxonGroup').value;
+            if (taxonId) {
+                formData.append('taxonId', taxonId);
+            }
 
             let url = '/api/identify/online';
             if (selectedLat !== null && selectedLng !== null) {
@@ -1063,6 +1090,9 @@
                 const score = (result.score || 0).toFixed(2);
                 const scorePercent = Math.min(100, Math.max(0, score));
                 const defaultPhoto = (taxon.default_photo && taxon.default_photo.medium_url) ? taxon.default_photo.medium_url : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzMzQxNTUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzY0NzQ4YiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTQiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5ObyBJbWFnZTwvdGV4dD48L3N2Zz4=';
+                
+                const rankMap = { 'genus': '属', 'family': '科', 'order': '目', 'class': '纲', 'phylum': '门', 'kingdom': '界', 'subspecies': '亚种' };
+                const rankText = (taxon.rank && taxon.rank !== 'species') ? `<span style="font-size: 0.7rem; background: #3b82f6; color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle;">${rankMap[taxon.rank] || taxon.rank}</span>` : '';
 
                 return `
                     <div class="result-card">
@@ -1070,7 +1100,7 @@
                             <img class="result-img" src="${defaultPhoto}" alt="${taxon.name}">
                         </div>
                         <div class="result-info">
-                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}</div>
+                            <div class="taxon-name">${taxon.preferred_common_name || taxon.name}${rankText}</div>
                             <div class="common-name">${taxon.name}</div>
                             
                             <div class="score-bar">

@@ -199,7 +199,7 @@ async def compress_image(image: UploadFile = File(...)):
     return Response(content=output.getvalue(), media_type="image/jpeg")
 
 @app.post("/api/identify")
-async def identify_image(image: UploadFile = File(...), province: Optional[str] = Form(None), lat: Optional[str] = Form(None), lng: Optional[str] = Form(None)):
+async def identify_image(image: UploadFile = File(...), province: Optional[str] = Form(None), lat: Optional[str] = Form(None), lng: Optional[str] = Form(None), taxonId: Optional[str] = Form("3")):
     if not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File uploaded is not an image.")
 
@@ -259,6 +259,8 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                 offline_info = cached_birds_db.get(sci_name)
                 is_chinese_bird = False
             
+            rank = "species"
+            
             if offline_info:
                 if detected_province and is_chinese_bird:
                     provinces = offline_info.get("provinces", [])
@@ -281,11 +283,13 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                 is_chinese_bird = False
                 
                 try:
-                    res = requests.get(f"https://api.inaturalist.org/v1/taxa?q={sci_name}&is_active=true&per_page=1&locale=zh-CN", timeout=5)
+                    taxon_id_query = f"&taxon_id={taxonId}" if taxonId else ""
+                    res = requests.get(f"https://api.inaturalist.org/v1/taxa?q={sci_name}&is_active=true&per_page=1&locale=zh-CN{taxon_id_query}", timeout=5)
                     if res.status_code == 200:
                         data = res.json()
                         if data.get("results"):
                             match = data["results"][0]
+                            rank = match.get("rank", "species")
                             if match.get("preferred_common_name"):
                                 common_name = match["preferred_common_name"]
                             if match.get("ancestors"):
@@ -335,6 +339,7 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                 "taxon": {
                     "name": sci_name,
                     "family": family,
+                    "rank": rank,
                     "preferred_common_name": common_name,
                     "default_photo": {"medium_url": default_photo} if default_photo else None
                 }
@@ -354,7 +359,8 @@ async def identify_image_online(
     token: str = Form(...),
     province: Optional[str] = Form(None),
     lat: Optional[str] = Form(None), 
-    lng: Optional[str] = Form(None)
+    lng: Optional[str] = Form(None),
+    taxonId: Optional[str] = Form("3")
 ):
     if not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="File uploaded is not an image.")
@@ -383,7 +389,9 @@ async def identify_image_online(
                 'Authorization': token
             }
             
-            url = 'https://api.inaturalist.org/v2/taxa/suggest?source=visual&taxon_id=3&fields=all'
+            url = 'https://api.inaturalist.org/v2/taxa/suggest?source=visual&fields=all'
+            if taxonId:
+                url += f'&taxon_id={taxonId}'
             
             # 发起同步请求 (使用 to_thread 避免阻塞事件循环)
             res = await asyncio.to_thread(

@@ -623,6 +623,20 @@
             <input type="password" id="apiToken" placeholder="iNaturalist JWT Token" style="width: 150px;">
         </div>
 
+        <div class="input-group" title="选择需要优先识别的生物大类">
+            <label>目标分类:</label>
+            <select id="taxonGroup" style="width: 120px; font-size: 0.85rem;">
+                <option value="3" selected>鸟类 (默认)</option>
+                <option value="40151">哺乳动物</option>
+                <option value="47158">昆虫</option>
+                <option value="47119">蛛形纲(蜘蛛等)</option>
+                <option value="47126">植物</option>
+                <option value="47170">真菌(蘑菇等)</option>
+                <option value="1">所有动物界</option>
+                <option value="">不限分类 (所有生物)</option>
+            </select>
+        </div>
+
         <button id="batchAnalyzeBtn" disabled>批量离线分析</button>
         <button id="saveBtn" class="primary" disabled>保存并回填至 Kestrel</button>
 
@@ -1176,7 +1190,11 @@
             container.innerHTML = '';
 
             results.forEach(res => {
-                const name = res.taxon.preferred_common_name || res.taxon.name;
+                let name = res.taxon.preferred_common_name || res.taxon.name;
+                if (res.taxon.rank && res.taxon.rank !== 'species') {
+                    const rankMap = { 'genus': '属', 'family': '科', 'order': '目', 'class': '纲', 'phylum': '门', 'kingdom': '界', 'subspecies': '亚种' };
+                    name += ` <span style="font-size: 0.7em; background: #3b82f6; color: white; padding: 1px 4px; border-radius: 3px; margin-left: 2px; vertical-align: middle;">${rankMap[res.taxon.rank] || res.taxon.rank}</span>`;
+                }
                 const scoreNum = res.score;
                 const scoreStr = res.score.toFixed(1) + '%';
 
@@ -1239,6 +1257,8 @@
                 formData.append('image', blob, filename);
                 if (province) formData.append('province', province);
                 if (isOnline) formData.append('token', token);
+                const taxonId = document.getElementById('taxonGroup').value;
+                if (taxonId) formData.append('taxonId', taxonId);
 
                 const url = isOnline ? '/api/identify/online' : '/api/identify';
                 const res = await fetch(url, { method: 'POST', body: formData });
@@ -1264,7 +1284,8 @@
                                     name: r.taxon.name,
                                     preferred_common_name: r.taxon.preferred_common_name || (localBird ? localBird.chinese : r.taxon.name),
                                     default_photo: r.taxon.default_photo,
-                                    family: familyStr
+                                    family: familyStr,
+                                    rank: r.taxon.rank
                                 }
                             };
                         });
@@ -1277,7 +1298,8 @@
                                 name: r.taxon.name,
                                 preferred_common_name: r.taxon.preferred_common_name || r.taxon.name,
                                 default_photo: r.taxon.default_photo,
-                                family: r.taxon.family
+                                family: r.taxon.family,
+                                rank: r.taxon.rank
                             }
                         }));
                     }
@@ -1330,6 +1352,8 @@
                     const formData = new FormData();
                     formData.append('image', blob, item.imgData.cropFilename);
                     if (province) formData.append('province', province);
+                    const taxonId = document.getElementById('taxonGroup').value;
+                    if (taxonId) formData.append('taxonId', taxonId);
 
                     const res = await fetch('/api/identify', { method: 'POST', body: formData });
                     if (res.ok) {
