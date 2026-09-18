@@ -233,13 +233,84 @@
 </head>
 
 <body>
+    <!-- 全局导航栏 -->
+    <style>
+        .global-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 1rem;
+            z-index: 9999;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .global-nav-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            max-width: 1200px;
+            width: 100%;
+            padding: 12px 0;
+            scrollbar-width: none;
+        }
+        .global-nav-container::-webkit-scrollbar {
+            display: none;
+        }
+        .global-nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .global-nav a:hover {
+            color: #f8fafc;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .global-nav a.active {
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+            font-weight: 600;
+        }
+        .topbar {
+            margin-top: 60px; /* Adjust topbar to account for fixed global nav */
+        }
+    </style>
+    <div class="global-nav">
+        <div class="global-nav-container">
+            <a href="bioclip.html" id="nav-bioclip">📸 AI 鸟类识别 (专业离线版)</a>
+            <a href="index.html" id="nav-index">🌐 AI 鸟类识别 (在线备用版)</a>
+            <a href="kestrel.html" id="nav-kestrel">🏷️ Kestrel 批量打标</a>
+            <a href="publisher.html" id="nav-publisher">📝 Bilibili 发布助手</a>
+        </div>
+    </div>
+    <script>
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const navIdMap = {
+            'bioclip.html': 'nav-bioclip',
+            'index.html': 'nav-index',
+            'kestrel.html': 'nav-kestrel',
+            'publisher.html': 'nav-publisher'
+        };
+        const activeNavId = navIdMap[currentPath];
+        if (activeNavId) {
+            document.getElementById(activeNavId).classList.add('active');
+        }
+    </script>
+    <!-- 全局导航栏结束 -->
 
     <div class="topbar">
         <div class="title">Bilibili Publisher</div>
-        <a href="/" style="color:var(--text-muted); text-decoration: none; font-size: 0.9rem;">← 返回 BioCLIP</a>
-        <a href="/kestrel"
-            style="color:var(--text-muted); text-decoration: none; font-size: 0.9rem; margin-left:1rem;">← 返回 Kestrel
-            Tagger</a>
     </div>
 
     <div class="container">
