@@ -159,5 +159,26 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/7814033/medium.jpg",
     "family": "Vespidae",
     "provinces": []
+  },
+  "Dolichovespula saxonica": {
+    "taxon_id": 129102,
+    "chinese_name": "石长黄胡蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/44972316/medium.jpg",
+    "family": "Vespidae",
+    "provinces": []
+  },
+  "Dolichovespula alpicola": {
+    "taxon_id": 465289,
+    "chinese_name": "Dolichovespula alpicola",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/86056639/medium.jpg",
+    "family": "Vespidae",
+    "provinces": []
+  },
+  "Dolichovespula norvegicoides": {
+    "taxon_id": 218630,
+    "chinese_name": "平长黄胡蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/32093368/medium.jpeg",
+    "family": "Vespidae",
+    "provinces": []
   }
 }

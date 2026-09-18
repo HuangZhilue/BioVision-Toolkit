@@ -4,13 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 鸟类识别 - 基于 iNaturalist API</title>
+    <title>AI 物种识别 - 基于 iNaturalist API</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- 引入 exifr 库来解析图片的 EXIF GPS 信息 -->
     <script src="https://cdn.jsdelivr.net/npm/exifr/dist/lite.umd.js"></script>
     <!-- 引入 Leaflet 地图 -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- 引入 Cropper.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <style>
         :root {
             --primary: #10b981;
@@ -381,8 +384,8 @@
     </style>
     <div class="global-nav">
         <div class="global-nav-container">
-            <a href="/" id="nav-bioclip"><span class="nav-icon">📸</span><span class="nav-text">AI 鸟类识别 (专业离线版)</span></a>
-            <a href="/index" id="nav-index"><span class="nav-icon">🌐</span><span class="nav-text">AI 鸟类识别 (在线备用版)</span></a>
+            <a href="/" id="nav-bioclip"><span class="nav-icon">📸</span><span class="nav-text">AI 物种识别 (专业离线版)</span></a>
+            <a href="/index" id="nav-index"><span class="nav-icon">🌐</span><span class="nav-text">AI 物种识别 (在线备用版)</span></a>
             <a href="/kestrel" id="nav-kestrel"><span class="nav-icon">🏷️</span><span class="nav-text">Kestrel 批量打标</span></a>
             <a href="/publisher" id="nav-publisher"><span class="nav-icon">📝</span><span class="nav-text">Bilibili 发布助手</span></a>
         </div>
@@ -403,8 +406,8 @@
     <!-- 全局导航栏结束 -->
     <div class="container">
         <header>
-            <h1>AI 鸟类识别</h1>
-            <p class="subtitle">上传鸟类图片，基于 iNaturalist API 自动识别物种</p>
+            <h1>AI 物种识别</h1>
+            <p class="subtitle">上传生物图片，基于 iNaturalist API 自动识别物种</p>
         </header>
 
         <div id="errorBox" class="error-msg"></div>
@@ -430,8 +433,12 @@
                         <strong>点击选择</strong> 或将图片拖拽至此处
                     </div>
                 </div>
-                <div style="text-align: center;">
-                    <img id="imagePreview" alt="预览">
+                <div style="margin-top: 1rem; width: 100%; max-height: 400px; display: flex; justify-content: center;">
+                    <img id="imagePreview" alt="预览" style="max-width: 100%; max-height: 400px; display: none;">
+                </div>
+                <div id="cropControls" style="text-align: center; margin-top: 0.5rem; display: none;">
+                    <button type="button" class="btn secondary-btn" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="if(window.cropper) { window.cropper.clear(); }">全图识别 (取消框选)</button>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">可在图片上拖拽框选待识别主体</p>
                 </div>
             </div>
         </div>
@@ -566,7 +573,20 @@
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     imagePreview.src = event.target.result;
-                    imagePreview.style.display = 'inline-block';
+                    imagePreview.style.display = 'block';
+                    document.getElementById('cropControls').style.display = 'block';
+                    
+                    if (window.cropper) {
+                        window.cropper.destroy();
+                    }
+                    window.cropper = new Cropper(imagePreview, {
+                        viewMode: 1,
+                        autoCrop: false,
+                        zoomable: false,
+                        movable: false,
+                        rotatable: false,
+                        scalable: false
+                    });
                 };
                 reader.readAsDataURL(file);
                 updateSubmitBtnState();
@@ -652,7 +672,21 @@
             resultsContainer.innerHTML = '';
 
             const formData = new FormData();
-            formData.append('image', selectedFile);
+            
+            // Get cropped image if available
+            let finalImageFile = selectedFile;
+            if (window.cropper) {
+                const croppedCanvas = window.cropper.getCroppedCanvas();
+                if (croppedCanvas) {
+                    try {
+                        const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, selectedFile.type || 'image/jpeg', 0.9));
+                        finalImageFile = new File([blob], selectedFile.name || 'cropped.jpg', { type: selectedFile.type || 'image/jpeg' });
+                    } catch (e) {
+                        console.error('Crop failed', e);
+                    }
+                }
+            }
+            formData.append('image', finalImageFile);
 
             // Construct API URL
             let url = 'https://api.inaturalist.org/v2/taxa/suggest?source=visual&fields=all';
@@ -705,7 +739,7 @@
 
         function displayResults(results) {
             if (!results || results.length === 0) {
-                resultsContainer.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">未找到匹配的鸟类物种。</p>';
+                resultsContainer.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">未找到匹配的物种。</p>';
                 return;
             }
 
