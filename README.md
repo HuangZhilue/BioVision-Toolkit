@@ -1,5 +1,7 @@
 # BioVision-Toolkit
 
+![Developed by AI Agent](https://img.shields.io/badge/Developed_with-AI_Agent-blueviolet?style=for-the-badge)
+
 [English](README_en.md) | [简体中文](README.md)
 
 基于本地 BioCLIP 模型开发的物种识别系统，集成 iNaturalist API 进行专业的动植物识别。该项目支持完全本地化/离线运行，并附带一系列用于图像批量打标和媒体发布的小工具。

@@ -1,5 +1,7 @@
 # BioVision-Toolkit
 
+![Developed by AI Agent](https://img.shields.io/badge/Developed_with-AI_Agent-blueviolet?style=for-the-badge)
+
 [English](README_en.md) | [简体中文](README.md)
 
 A species identification system powered by the local BioCLIP model, integrating the iNaturalist API for professional flora and fauna recognition. This project supports fully localized/offline execution and comes with a suite of mini-tools for batch image tagging and media publishing.
