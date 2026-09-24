@@ -1,0 +1,23 @@
+{
+  "Fowlea flavipunctata": {
+    "taxon_id": 966797,
+    "chinese_name": "黄斑渔游蛇",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/108115341/medium.jpeg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Natrix tessellata": {
+    "taxon_id": 64346,
+    "chinese_name": "棋斑水游蛇",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/333571124/medium.jpeg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Natrix maura": {
+    "taxon_id": 29351,
+    "chinese_name": "蝰游蛇",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/1562526/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  }
+}

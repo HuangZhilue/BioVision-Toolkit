@@ -47,5 +47,33 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/231038573/medium.jpg",
     "family": "Unknown",
     "provinces": []
+  },
+  "Fejervarya kawamurai": {
+    "taxon_id": 134709,
+    "chinese_name": "川村陆蛙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/21577266/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Amolops larutensis": {
+    "taxon_id": 25886,
+    "chinese_name": "牢鲁湍蛙",
+    "image_url": "https://static.inaturalist.org/photos/61702696/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Rana boylii": {
+    "taxon_id": 25646,
+    "chinese_name": "黄腿林蛙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/658214282/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Boana xerophylla": {
+    "taxon_id": 555164,
+    "chinese_name": "Boana xerophylla",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/489036035/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
   }
 }

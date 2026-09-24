@@ -47,5 +47,19 @@
     "image_url": "https://static.inaturalist.org/photos/148511331/medium.jpeg",
     "family": "Gobiidae",
     "provinces": []
+  },
+  "Periophthalmus argentilineatus": {
+    "taxon_id": 68720,
+    "chinese_name": "银线弹涂鱼",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/554143564/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Cottus girardi": {
+    "taxon_id": 98568,
+    "chinese_name": "Cottus girardi",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/254116414/medium.jpeg",
+    "family": "Unknown",
+    "provinces": []
   }
 }
