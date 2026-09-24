@@ -14,7 +14,7 @@ services:
       - ./kestrel.html:/app/kestrel.html  
       - ./publisher.html:/app/publisher.html
       - ./china_birds.json:/app/china_birds.json
-      - ./cached_birds.json:/app/cached_birds.json
+      - ./cached_species.json:/app/cached_species.json
       - ./app.py:/app/app.py
 
 #     networks:
@@ -23,3 +23,4 @@ services:
 # networks:
 #   1panel-network:
 #     external: true
+

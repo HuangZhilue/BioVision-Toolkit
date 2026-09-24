@@ -55,10 +55,10 @@ PROVINCE_COORDS = {
 
 # Load offline database
 china_birds_db = {}
-cached_birds_db = {}
+cached_species_db = {}
 
 def load_china_birds_db():
-    global china_birds_db, cached_birds_db
+    global china_birds_db, cached_species_db
     if os.path.exists("china_birds.json"):
         print("Loading offline China birds database...")
         try:
@@ -68,12 +68,12 @@ def load_china_birds_db():
         except Exception as e:
             print(f"Failed to load offline database: {e}")
             
-    if os.path.exists("cached_birds.json"):
-        print("Loading cached global birds database...")
+    if os.path.exists("cached_species.json"):
+        print("Loading cached global species database...")
         try:
-            with open("cached_birds.json", "r", encoding="utf-8") as f:
-                cached_birds_db = json.load(f)
-            print(f"Loaded {len(cached_birds_db)} cached birds into memory.")
+            with open("cached_species.json", "r", encoding="utf-8") as f:
+                cached_species_db = json.load(f)
+            print(f"Loaded {len(cached_species_db)} cached species into memory.")
         except Exception as e:
             print(f"Failed to load cached database: {e}")
 
@@ -256,7 +256,7 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
             is_chinese_bird = True
             
             if not offline_info:
-                offline_info = cached_birds_db.get(sci_name)
+                offline_info = cached_species_db.get(sci_name)
                 is_chinese_bird = False
             
             rank = "species"
@@ -301,7 +301,7 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                                 default_photo = match["default_photo"]["medium_url"]
                             
                             # --- 自动积累模式 (Auto-caching) ---
-                            def auto_cache_bird(s_name, p_url, t_id, c_name, f_name):
+                            def auto_cache_species(s_name, p_url, t_id, c_name, f_name):
                                 try:
                                     if p_url:
                                         filename = s_name.replace(" ", "_").replace("/", "_") + ".jpg"
@@ -313,21 +313,21 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                                                 with open(filepath, 'wb') as f:
                                                     f.write(img_res.content)
                                     
-                                    if s_name not in china_birds_db and s_name not in cached_birds_db:
-                                        cached_birds_db[s_name] = {
+                                    if s_name not in china_birds_db and s_name not in cached_species_db:
+                                        cached_species_db[s_name] = {
                                             "taxon_id": t_id,
                                             "chinese_name": c_name,
                                             "image_url": p_url,
                                             "family": f_name,
                                             "provinces": []
                                         }
-                                        with open("cached_birds.json", "w", encoding="utf-8") as f:
-                                            json.dump(cached_birds_db, f, ensure_ascii=False, indent=2)
-                                        print(f"✅ 自动积累新鸟种成功: {s_name} ({c_name})")
+                                        with open("cached_species.json", "w", encoding="utf-8") as f:
+                                            json.dump(cached_species_db, f, ensure_ascii=False, indent=2)
+                                        print(f"✅ 自动积累新物种成功: {s_name} ({c_name})")
                                 except Exception as e:
                                     print(f"自动积累失败 {s_name}: {e}")
 
-                            asyncio.create_task(asyncio.to_thread(auto_cache_bird, sci_name, default_photo, match.get("id"), common_name, family))
+                            asyncio.create_task(asyncio.to_thread(auto_cache_species, sci_name, default_photo, match.get("id"), common_name, family))
                             # -----------------------------------
                 except Exception as e:
                     print(f"API fallback failed for {sci_name}: {e}")
@@ -426,3 +426,4 @@ if __name__ == "__main__":
     import uvicorn
     # 修改为 0.0.0.0，以便在 Docker 容器外部可以访问
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
