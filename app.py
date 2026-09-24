@@ -53,29 +53,87 @@ PROVINCE_COORDS = {
 }
 
 
+# Map of taxonomic groups
+GROUPS = ['birds', 'mammals', 'insects', 'fishes', 'arachnids', 'plants', 'fungi', 'amphibians', 'reptiles', 'mollusks', 'others']
+
 # Load offline database
 china_birds_db = {}
-cached_species_db = {}
+cached_species_dbs = {g: {} for g in GROUPS}
+
+def get_group_from_ancestors(ancestor_ids):
+    group_name = "others"
+    if not ancestor_ids: return group_name
+    
+    for aid in ancestor_ids:
+        if aid == 3: group_name = "birds"
+        elif aid == 40151: group_name = "mammals"
+        elif aid == 47158: group_name = "insects"
+        elif aid in [47178, 11865]: group_name = "fishes"  # Actinopterygii or Chondrichthyes
+        elif aid == 47119: group_name = "arachnids"
+        elif aid == 47126: group_name = "plants"
+        elif aid == 47170: group_name = "fungi"
+        elif aid == 20978: group_name = "amphibians"
+        elif aid == 26036: group_name = "reptiles"
+        elif aid == 47115: group_name = "mollusks"
+        
+    if group_name == "others":
+        if 1 in ancestor_ids: group_name = "animalia"
+            
+    return group_name
 
 def load_china_birds_db():
-    global china_birds_db, cached_species_db
-    if os.path.exists("china_birds.json"):
+    global china_birds_db, cached_species_dbs
+    
+    os.makedirs("database", exist_ok=True)
+    
+    if os.path.exists("database/china_birds.json"):
         print("Loading offline China birds database...")
         try:
-            with open("china_birds.json", "r", encoding="utf-8") as f:
+            with open("database/china_birds.json", "r", encoding="utf-8") as f:
                 china_birds_db = json.load(f)
             print(f"Loaded {len(china_birds_db)} birds into memory.")
         except Exception as e:
             print(f"Failed to load offline database: {e}")
             
-    if os.path.exists("cached_species.json"):
-        print("Loading cached global species database...")
-        try:
-            with open("cached_species.json", "r", encoding="utf-8") as f:
-                cached_species_db = json.load(f)
-            print(f"Loaded {len(cached_species_db)} cached species into memory.")
-        except Exception as e:
-            print(f"Failed to load cached database: {e}")
+    for g in GROUPS:
+        filepath = f"database/cached_{g}.json"
+        if os.path.exists(filepath):
+            print(f"Loading {filepath}...")
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    cached_species_dbs[g] = json.load(f)
+                print(f"Loaded {len(cached_species_dbs[g])} species for {g}.")
+            except Exception as e:
+                print(f"Failed to load {filepath}: {e}")
+
+def auto_cache_species_global(s_name, p_url, t_id, c_name, f_name, ancestors):
+    try:
+        target_group = get_group_from_ancestors(ancestors)
+        
+        if p_url:
+            filename = s_name.replace(" ", "_").replace("/", "_") + ".jpg"
+            filepath = os.path.join("offline_images", target_group, filename)
+            folder_path = os.path.join("offline_images", target_group)
+            if not os.path.exists(filepath):
+                os.makedirs(folder_path, exist_ok=True)
+                img_res = requests.get(p_url, timeout=10)
+                if img_res.status_code == 200:
+                    with open(filepath, 'wb') as f:
+                        f.write(img_res.content)
+        
+        if s_name not in china_birds_db and s_name not in cached_species_dbs[target_group]:
+            cached_species_dbs[target_group][s_name] = {
+                "taxon_id": t_id,
+                "chinese_name": c_name,
+                "image_url": p_url,
+                "family": f_name,
+                "provinces": []
+            }
+            with open(f"database/cached_{target_group}.json", "w", encoding="utf-8") as f:
+                json.dump(cached_species_dbs[target_group], f, ensure_ascii=False, indent=2)
+            print(f"✅ 自动积累新物种成功: {s_name} ({c_name}) -> {target_group}")
+    except Exception as e:
+        print(f"自动积累失败 {s_name}: {e}")
 
 load_china_birds_db()
 
@@ -168,7 +226,10 @@ async def read_publisher():
 
 @app.get("/api/birds")
 async def get_birds():
-    return china_birds_db
+    combined = china_birds_db.copy()
+    for g in GROUPS:
+        combined.update(cached_species_dbs[g])
+    return combined
 
 @app.post("/api/compress")
 async def compress_image(image: UploadFile = File(...)):
@@ -255,9 +316,14 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
             is_rare_in_region = False
             is_chinese_bird = True
             
+            cached_group = None
             if not offline_info:
-                offline_info = cached_species_db.get(sci_name)
                 is_chinese_bird = False
+                for g in GROUPS:
+                    if sci_name in cached_species_dbs[g]:
+                        offline_info = cached_species_dbs[g].get(sci_name)
+                        cached_group = g
+                        break
             
             rank = "species"
             
@@ -275,7 +341,8 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
 
                 # Use local image path
                 image_filename = sci_name.replace(" ", "_").replace("/", "_") + ".jpg"
-                default_photo = f"/images/{image_filename}" if offline_info.get("image_url") else None
+                group_folder = "birds" if is_chinese_bird else cached_group
+                default_photo = f"/images/{group_folder}/{image_filename}" if offline_info.get("image_url") else None
             else:
                 # Online API Fallback
                 common_name = pred.get("common_name") or sci_name
@@ -301,33 +368,12 @@ async def identify_image(image: UploadFile = File(...), province: Optional[str] 
                                 default_photo = match["default_photo"]["medium_url"]
                             
                             # --- 自动积累模式 (Auto-caching) ---
-                            def auto_cache_species(s_name, p_url, t_id, c_name, f_name):
-                                try:
-                                    if p_url:
-                                        filename = s_name.replace(" ", "_").replace("/", "_") + ".jpg"
-                                        filepath = os.path.join("offline_images", filename)
-                                        if not os.path.exists(filepath):
-                                            os.makedirs("offline_images", exist_ok=True)
-                                            img_res = requests.get(p_url, timeout=10)
-                                            if img_res.status_code == 200:
-                                                with open(filepath, 'wb') as f:
-                                                    f.write(img_res.content)
-                                    
-                                    if s_name not in china_birds_db and s_name not in cached_species_db:
-                                        cached_species_db[s_name] = {
-                                            "taxon_id": t_id,
-                                            "chinese_name": c_name,
-                                            "image_url": p_url,
-                                            "family": f_name,
-                                            "provinces": []
-                                        }
-                                        with open("cached_species.json", "w", encoding="utf-8") as f:
-                                            json.dump(cached_species_db, f, ensure_ascii=False, indent=2)
-                                        print(f"✅ 自动积累新物种成功: {s_name} ({c_name})")
-                                except Exception as e:
-                                    print(f"自动积累失败 {s_name}: {e}")
-
-                            asyncio.create_task(asyncio.to_thread(auto_cache_species, sci_name, default_photo, match.get("id"), common_name, family))
+                            # --- 自动积累模式 (Auto-caching) ---
+                            ancestor_ids = match.get("ancestor_ids") or [a.get("id") for a in match.get("ancestors", [])]
+                            asyncio.create_task(asyncio.to_thread(
+                                auto_cache_species_global, 
+                                sci_name, default_photo, match.get("id"), common_name, family, ancestor_ids
+                            ))
                             # -----------------------------------
                 except Exception as e:
                     print(f"API fallback failed for {sci_name}: {e}")
@@ -415,7 +461,35 @@ async def identify_image_online(
                     pass
                 raise HTTPException(status_code=res.status_code, detail=error_msg)
                 
-            return res.json()
+            json_data = res.json()
+            
+            # --- Auto cache top 3 online results ---
+            if json_data.get("results"):
+                for r in json_data["results"][:3]:
+                    taxon = r.get("taxon", {})
+                    sci_name = taxon.get("name")
+                    if not sci_name: continue
+                    
+                    t_id = taxon.get("id")
+                    c_name = taxon.get("preferred_common_name") or sci_name
+                    p_url = None
+                    if taxon.get("default_photo") and taxon["default_photo"].get("medium_url"):
+                        p_url = taxon["default_photo"]["medium_url"]
+                    
+                    f_name = "Unknown"
+                    ancestors = taxon.get("ancestors", [])
+                    for anc in ancestors:
+                        if anc.get("rank") == "family":
+                            f_name = anc.get("name") or f_name
+                            break
+                            
+                    ancestor_ids = taxon.get("ancestor_ids") or [a.get("id") for a in taxon.get("ancestors", [])]
+                    asyncio.create_task(asyncio.to_thread(
+                        auto_cache_species_global, 
+                        sci_name, p_url, t_id, c_name, f_name, ancestor_ids
+                    ))
+            
+            return json_data
             
         except HTTPException:
             raise

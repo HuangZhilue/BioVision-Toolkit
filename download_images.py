@@ -30,8 +30,8 @@ def download_image(sci_name, image_url, output_dir):
                 print(f"Failed to download {sci_name} after 3 attempts: {e}")
 
 def main():
-    json_path = "china_birds.json"
-    output_dir = "offline_images"
+    json_path = "database/china_birds.json"
+    output_dir = os.path.join("offline_images", "birds")
     
     if not os.path.exists(json_path):
         print(f"Error: {json_path} not found.")

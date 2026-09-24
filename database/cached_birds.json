@@ -1,0 +1,667 @@
+{
+  "Fluvicola pica": {
+    "taxon_id": 17281,
+    "chinese_name": "斑水霸鹟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/12513161/medium.jpeg",
+    "family": "Tyrannidae",
+    "provinces": []
+  },
+  "Epthianura albifrons": {
+    "taxon_id": 12651,
+    "chinese_name": "白额澳䳭",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/163060608/medium.jpg",
+    "family": "Meliphagidae",
+    "provinces": []
+  },
+  "Pternistis afer": {
+    "taxon_id": 495994,
+    "chinese_name": "红喉彩鹧鸪",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/2635250/medium.jpg",
+    "family": "Phasianidae",
+    "provinces": []
+  },
+  "Pternistis nobilis": {
+    "taxon_id": 495932,
+    "chinese_name": "艳彩鹧鸪",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/81627840/medium.jpg",
+    "family": "Phasianidae",
+    "provinces": []
+  },
+  "Turdus plebejus": {
+    "taxon_id": 12712,
+    "chinese_name": "美洲山鸫",
+    "image_url": "https://static.inaturalist.org/photos/116465028/medium.jpg",
+    "family": "Turdidae",
+    "provinces": []
+  },
+  "Turdus anthracinus": {
+    "taxon_id": 719056,
+    "chinese_name": "Sombre thrush",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/27163138/medium.jpeg",
+    "family": "Turdidae",
+    "provinces": []
+  },
+  "Turdus chiguanco": {
+    "taxon_id": 12780,
+    "chinese_name": "芝古鸫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/174613038/medium.jpeg",
+    "family": "Turdidae",
+    "provinces": []
+  },
+  "Torgos tracheliotos": {
+    "taxon_id": 5401,
+    "chinese_name": "肉垂秃鹫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/333938254/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Gyps africanus": {
+    "taxon_id": 5363,
+    "chinese_name": "非洲兀鹫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/150470465/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Gyps rueppellii": {
+    "taxon_id": 327608,
+    "chinese_name": "黑白兀鹫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/782498/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Torgos tracheliotus": {
+    "taxon_id": 5401,
+    "chinese_name": "肉垂秃鹫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/333938254/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Parus nuchalis": {
+    "taxon_id": 513968,
+    "chinese_name": "白枕山雀",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/292289740/medium.jpg",
+    "family": "Paridae",
+    "provinces": []
+  },
+  "Parus aplonotus": {
+    "taxon_id": 513970,
+    "chinese_name": "黑斑黄山雀",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/171065764/medium.jpg",
+    "family": "Paridae",
+    "provinces": []
+  },
+  "Parus amabilis": {
+    "taxon_id": 339690,
+    "chinese_name": "巴拉望山雀",
+    "image_url": "https://static.inaturalist.org/photos/665051165/medium.jpg",
+    "family": "Paridae",
+    "provinces": []
+  },
+  "Numenius hudsonicus": {
+    "taxon_id": 1188213,
+    "chinese_name": "哈德森杓鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/1940369/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Numenius tenuirostris": {
+    "taxon_id": 3899,
+    "chinese_name": "细嘴杓鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/6377779/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Numenius tahitiensis": {
+    "taxon_id": 3909,
+    "chinese_name": "太平洋杓鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/395654818/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Egretta dimorpha": {
+    "taxon_id": 467749,
+    "chinese_name": "Dimorphic egret",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/55826941/medium.jpeg",
+    "family": "Ardeidae",
+    "provinces": []
+  },
+  "Egretta gularis": {
+    "taxon_id": 4935,
+    "chinese_name": "黄喉岩鹭",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/119813364/medium.jpeg",
+    "family": "Ardeidae",
+    "provinces": []
+  },
+  "Numenius borealis": {
+    "taxon_id": 3895,
+    "chinese_name": "极北杓鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/602117219/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Zosterops crookshanki": {
+    "taxon_id": 719100,
+    "chinese_name": "Oya Tabu White-eye",
+    "image_url": null,
+    "family": "Zosteropidae",
+    "provinces": []
+  },
+  "Zosterops meyeni": {
+    "taxon_id": 17443,
+    "chinese_name": "低地绣眼鸟",
+    "image_url": "https://static.inaturalist.org/photos/578251955/medium.jpg",
+    "family": "Zosteropidae",
+    "provinces": []
+  },
+  "Zosterops consobrinorum": {
+    "taxon_id": 17491,
+    "chinese_name": "淡腹绣眼鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/129076340/medium.jpeg",
+    "family": "Zosteropidae",
+    "provinces": []
+  },
+  "Tringa incana": {
+    "taxon_id": 144490,
+    "chinese_name": "漂鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/113994102/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Milvus aegyptius": {
+    "taxon_id": 5268,
+    "chinese_name": "黑鸢",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/547540505/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Aquila hastata": {
+    "taxon_id": 201034,
+    "chinese_name": "小乌雕",
+    "image_url": "https://static.inaturalist.org/photos/126332779/medium.jpeg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Ictinaetus malayensis": {
+    "taxon_id": 367472,
+    "chinese_name": "林雕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/30653128/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Aquila clanga": {
+    "taxon_id": 201035,
+    "chinese_name": "乌雕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/465901609/medium.jpg",
+    "family": "Accipitridae",
+    "provinces": []
+  },
+  "Brachyramphus brevirostris": {
+    "taxon_id": 4533,
+    "chinese_name": "小嘴斑海雀",
+    "image_url": "https://static.inaturalist.org/photos/10095534/medium.jpg",
+    "family": "Alcidae",
+    "provinces": []
+  },
+  "Cacomantis variolosus": {
+    "taxon_id": 1832,
+    "chinese_name": "灌丛杜鹃",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/57559180/medium.jpg",
+    "family": "Cuculidae",
+    "provinces": []
+  },
+  "Himantopus melanurus": {
+    "taxon_id": 464940,
+    "chinese_name": "White-backed stilt",
+    "image_url": "https://static.inaturalist.org/photos/445346031/medium.jpg",
+    "family": "Recurvirostridae",
+    "provinces": []
+  },
+  "Recurvirostra americana": {
+    "taxon_id": 4885,
+    "chinese_name": "褐胸反嘴鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/134687620/medium.jpg",
+    "family": "Recurvirostridae",
+    "provinces": []
+  },
+  "Calidris ptilocnemis": {
+    "taxon_id": 3839,
+    "chinese_name": "岩滨鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/5333676/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Rollandia microptera": {
+    "taxon_id": 4250,
+    "chinese_name": "短翅鸊鷉",
+    "image_url": "https://static.inaturalist.org/photos/528647746/medium.jpg",
+    "family": "Podicipedidae",
+    "provinces": []
+  },
+  "Synthliboramphus wumizusume": {
+    "taxon_id": 4560,
+    "chinese_name": "冠扁嘴海雀",
+    "image_url": "https://static.inaturalist.org/photos/65762336/medium.jpg",
+    "family": "Alcidae",
+    "provinces": []
+  },
+  "Passer gongonensis": {
+    "taxon_id": 13862,
+    "chinese_name": "鹦嘴麻雀",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/1068920/medium.JPG",
+    "family": "Passeridae",
+    "provinces": []
+  },
+  "Clytospiza monteiri": {
+    "taxon_id": 14089,
+    "chinese_name": "褐双点雀",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/8193270/medium.jpg",
+    "family": "Estrildidae",
+    "provinces": []
+  },
+  "Lonchura hunsteini": {
+    "taxon_id": 13884,
+    "chinese_name": "杂色文鸟",
+    "image_url": "https://static.inaturalist.org/photos/110164893/medium.jpg",
+    "family": "Estrildidae",
+    "provinces": []
+  },
+  "Acridotheres melanopterus": {
+    "taxon_id": 145097,
+    "chinese_name": "黑袖椋鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/279212369/medium.jpg",
+    "family": "Sturnidae",
+    "provinces": []
+  },
+  "Lanius validirostris": {
+    "taxon_id": 12044,
+    "chinese_name": "灰顶伯劳",
+    "image_url": "https://static.inaturalist.org/photos/369972764/medium.jpeg",
+    "family": "Laniidae",
+    "provinces": []
+  },
+  "Lanius gubernator": {
+    "taxon_id": 12049,
+    "chinese_name": "艾氏伯劳",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/9139027/medium.jpeg",
+    "family": "Laniidae",
+    "provinces": []
+  },
+  "Lanius vittatus": {
+    "taxon_id": 12052,
+    "chinese_name": "褐背伯劳",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/59830834/medium.jpg",
+    "family": "Laniidae",
+    "provinces": []
+  },
+  "Gallinago andina": {
+    "taxon_id": 3918,
+    "chinese_name": "山沙锥",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/429311077/medium.jpeg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Gallinago nigripennis": {
+    "taxon_id": 3924,
+    "chinese_name": "非洲沙锥",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/15696487/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Gallinago delicata": {
+    "taxon_id": 144496,
+    "chinese_name": "威氏鹬",
+    "image_url": "https://static.inaturalist.org/photos/105697371/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Gallinago media": {
+    "taxon_id": 3919,
+    "chinese_name": "斑腹沙锥",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/308401816/medium.jpeg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Cladorhynchus leucocephalus": {
+    "taxon_id": 4916,
+    "chinese_name": "斑长脚鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/35095128/medium.jpg",
+    "family": "Recurvirostridae",
+    "provinces": []
+  },
+  "Himantopus novaezelandiae": {
+    "taxon_id": 4833,
+    "chinese_name": "黑长脚鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/17445875/medium.jpg",
+    "family": "Recurvirostridae",
+    "provinces": []
+  },
+  "Cacomantis passerinus": {
+    "taxon_id": 96386,
+    "chinese_name": "灰腹杜鹃",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/101762156/medium.jpeg",
+    "family": "Cuculidae",
+    "provinces": []
+  },
+  "Rhodostethia rosea": {
+    "taxon_id": 4557,
+    "chinese_name": "楔尾鸥",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/195607089/medium.jpg",
+    "family": "Laridae",
+    "provinces": []
+  },
+  "Larus armenicus": {
+    "taxon_id": 144523,
+    "chinese_name": "亚美尼亚鸥",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/211807500/medium.jpg",
+    "family": "Laridae",
+    "provinces": []
+  },
+  "Vanellus leucurus": {
+    "taxon_id": 4860,
+    "chinese_name": "白尾麦鸡",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/171563160/medium.jpeg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius javanicus": {
+    "taxon_id": 1505656,
+    "chinese_name": "爪哇鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/614475025/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius semipalmatus": {
+    "taxon_id": 4817,
+    "chinese_name": "半蹼鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/19719958/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius placidus": {
+    "taxon_id": 1580337,
+    "chinese_name": "长嘴剑鸻",
+    "image_url": "https://static.inaturalist.org/photos/53694806/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius dubius": {
+    "taxon_id": 1580336,
+    "chinese_name": "金眶鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/28895106/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Elseyornis melanops": {
+    "taxon_id": 1580333,
+    "chinese_name": "黑额鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/198318695/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius collaris": {
+    "taxon_id": 1505645,
+    "chinese_name": "领鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/37910349/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius leschenaultii": {
+    "taxon_id": 1505629,
+    "chinese_name": "铁嘴沙鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/122028030/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius nivosus": {
+    "taxon_id": 1505663,
+    "chinese_name": "雪鸻",
+    "image_url": "https://static.inaturalist.org/photos/4438195/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius alticola": {
+    "taxon_id": 1505665,
+    "chinese_name": "山鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/45805972/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius dealbatus": {
+    "taxon_id": 1505650,
+    "chinese_name": "白脸鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/505107092/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius peronii": {
+    "taxon_id": 1505775,
+    "chinese_name": "马来鸻",
+    "image_url": "https://static.inaturalist.org/photos/501341884/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius falklandicus": {
+    "taxon_id": 1505666,
+    "chinese_name": "双斑鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/260322054/medium.jpeg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius veredus": {
+    "taxon_id": 1505627,
+    "chinese_name": "东方鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/736342601/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Phegornis mitchellii": {
+    "taxon_id": 4910,
+    "chinese_name": "黑顶鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/70698695/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius wilsonia": {
+    "taxon_id": 1505633,
+    "chinese_name": "厚嘴鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/31168958/medium.jpeg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Calidris pusilla": {
+    "taxon_id": 3862,
+    "chinese_name": "半蹼滨鹬",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/320602640/medium.jpg",
+    "family": "Scolopacidae",
+    "provinces": []
+  },
+  "Drymocichla incana": {
+    "taxon_id": 7786,
+    "chinese_name": "红翅灰莺",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/8193218/medium.jpg",
+    "family": "Cisticolidae",
+    "provinces": []
+  },
+  "Sturnia erythropygia": {
+    "taxon_id": 145105,
+    "chinese_name": "白头椋鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/262978553/medium.jpg",
+    "family": "Sturnidae",
+    "provinces": []
+  },
+  "Lalage sharpei": {
+    "taxon_id": 8385,
+    "chinese_name": "萨摩亚鸣鹃鵙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/10193573/medium.jpeg",
+    "family": "Campephagidae",
+    "provinces": []
+  },
+  "Carpodectes antoniae": {
+    "taxon_id": 8923,
+    "chinese_name": "黄嘴白伞鸟",
+    "image_url": "https://static.inaturalist.org/photos/167493116/medium.jpeg",
+    "family": "Cotingidae",
+    "provinces": []
+  },
+  "Agapornis canus": {
+    "taxon_id": 19078,
+    "chinese_name": "灰头牡丹鹦鹉",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/9092025/medium.jpeg",
+    "family": "Psittacidae",
+    "provinces": []
+  },
+  "Zosterops mauritianus": {
+    "taxon_id": 367663,
+    "chinese_name": "毛里求斯灰绣眼鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/21164630/medium.jpg",
+    "family": "Zosteropidae",
+    "provinces": []
+  },
+  "Lalage nigra": {
+    "taxon_id": 8382,
+    "chinese_name": "黑鸣鹃鵙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/468219522/medium.jpeg",
+    "family": "Campephagidae",
+    "provinces": []
+  },
+  "Artamella viridis": {
+    "taxon_id": 8369,
+    "chinese_name": "白头钩嘴鵙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/211921660/medium.jpg",
+    "family": "Vangidae",
+    "provinces": []
+  },
+  "Conirostrum margaritae": {
+    "taxon_id": 10008,
+    "chinese_name": "珠胸锥嘴雀",
+    "image_url": "https://static.inaturalist.org/photos/128871789/medium.jpg",
+    "family": "Thraupidae",
+    "provinces": []
+  },
+  "Lalage melanoleuca": {
+    "taxon_id": 8384,
+    "chinese_name": "黑白鸣鹃鵙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/233250886/medium.jpeg",
+    "family": "Campephagidae",
+    "provinces": []
+  },
+  "Xipholena atropurpurea": {
+    "taxon_id": 8906,
+    "chinese_name": "白翅伞鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/2506944/medium.jpg",
+    "family": "Cotingidae",
+    "provinces": []
+  },
+  "Chlamydera cerviniventris": {
+    "taxon_id": 14500,
+    "chinese_name": "浅黄胸大亭鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/9466792/medium.jpeg",
+    "family": "Ptilonorhynchidae",
+    "provinces": []
+  },
+  "Acrocephalus vaughani": {
+    "taxon_id": 116770,
+    "chinese_name": "皮岛苇莺",
+    "image_url": "https://static.inaturalist.org/photos/14828585/medium.jpg",
+    "family": "Acrocephalidae",
+    "provinces": []
+  },
+  "Certhionyx variegatus": {
+    "taxon_id": 12653,
+    "chinese_name": "白肩黑吸蜜鸟",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/55818566/medium.jpg",
+    "family": "Meliphagidae",
+    "provinces": []
+  },
+  "Aplonis zelandica": {
+    "taxon_id": 719512,
+    "chinese_name": "Rusty-winged starling",
+    "image_url": null,
+    "family": "Sturnidae",
+    "provinces": []
+  },
+  "Apus acuticauda": {
+    "taxon_id": 6653,
+    "chinese_name": "暗背雨燕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/8236297/medium.jpg",
+    "family": "Apodidae",
+    "provinces": []
+  },
+  "Apus horus": {
+    "taxon_id": 144253,
+    "chinese_name": "白眉雨燕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/182427732/medium.jpg",
+    "family": "Apodidae",
+    "provinces": []
+  },
+  "Apus niansae": {
+    "taxon_id": 6630,
+    "chinese_name": "尼安萨雨燕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/29688300/medium.jpeg",
+    "family": "Apodidae",
+    "provinces": []
+  },
+  "Ducula bicolor": {
+    "taxon_id": 3255,
+    "chinese_name": "斑皇鸠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/158116884/medium.jpg",
+    "family": "Columbidae",
+    "provinces": []
+  },
+  "Ducula spilorrhoa": {
+    "taxon_id": 979701,
+    "chinese_name": "澳洲斑皇鸠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/25635277/medium.jpg",
+    "family": "Columbidae",
+    "provinces": []
+  },
+  "Coracina fortis": {
+    "taxon_id": 7970,
+    "chinese_name": "布鲁鹃鵙",
+    "image_url": "https://static.inaturalist.org/photos/245966155/medium.jpeg",
+    "family": "Campephagidae",
+    "provinces": []
+  },
+  "Creatophora cinerea": {
+    "taxon_id": 15032,
+    "chinese_name": "肉垂椋鸟",
+    "image_url": "https://static.inaturalist.org/photos/257858197/medium.jpeg",
+    "family": "Sturnidae",
+    "provinces": []
+  },
+  "Chrysococcyx ruficollis": {
+    "taxon_id": 1578716,
+    "chinese_name": "红喉金鹃",
+    "image_url": "https://static.inaturalist.org/photos/65166780/medium.jpg",
+    "family": "Cuculidae",
+    "provinces": []
+  },
+  "Rhaphidura leucopygialis": {
+    "taxon_id": 6589,
+    "chinese_name": "银腰针尾雨燕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/10942882/medium.jpg",
+    "family": "Apodidae",
+    "provinces": []
+  },
+  "Charadrius alexandrinus": {
+    "taxon_id": 1505620,
+    "chinese_name": "环颈鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/59571741/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Charadrius sanctaehelenae": {
+    "taxon_id": 1505664,
+    "chinese_name": "圣岛沙鸻",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/419898409/medium.jpg",
+    "family": "Charadriidae",
+    "provinces": []
+  },
+  "Apus affinis": {
+    "taxon_id": 6612,
+    "chinese_name": "小雨燕",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/173576219/medium.jpg",
+    "family": "Apodidae",
+    "provinces": []
+  }
+}

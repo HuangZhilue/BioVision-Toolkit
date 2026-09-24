@@ -131,11 +131,13 @@ def main():
             time.sleep(1)
             
     # Save to file
-    with open("china_birds.json", "w", encoding="utf-8") as f:
+    import os
+    os.makedirs("database", exist_ok=True)
+    with open("database/china_birds.json", "w", encoding="utf-8") as f:
         json.dump(birds_dict, f, ensure_ascii=False, indent=2)
         
     print(f"\n==============================================")
-    print(f"太棒了！离线数据库 china_birds.json 重建完成！")
+    print(f"太棒了！离线数据库 database/china_birds.json 重建完成！")
     print(f"最终共收录了 {len(birds_dict)} 种鸟类，均已包含图片URL、科属和分布省份！")
     print(f"==============================================")
 

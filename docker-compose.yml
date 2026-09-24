@@ -13,8 +13,7 @@ services:
       - ./index.html:/app/index.html
       - ./kestrel.html:/app/kestrel.html  
       - ./publisher.html:/app/publisher.html
-      - ./china_birds.json:/app/china_birds.json
-      - ./cached_species.json:/app/cached_species.json
+      - ./database:/app/database
       - ./app.py:/app/app.py
 
 #     networks:

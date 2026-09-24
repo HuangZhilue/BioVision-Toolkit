@@ -1,0 +1,37 @@
+{
+  "Amietia vertebralis": {
+    "taxon_id": 25868,
+    "chinese_name": "Drakensberg stream frog",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/248682837/medium.jpg",
+    "family": "Pyxicephalidae",
+    "provinces": []
+  },
+  "Discoglossus montalentii": {
+    "taxon_id": 65425,
+    "chinese_name": "科西嘉盘舌蟾",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/86997490/medium.jpeg",
+    "family": "Alytidae",
+    "provinces": []
+  },
+  "Hylodes asper": {
+    "taxon_id": 23007,
+    "chinese_name": "Hylodes asper",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/25521080/medium.jpg",
+    "family": "Hylodidae",
+    "provinces": []
+  },
+  "Pelophylax cretensis": {
+    "taxon_id": 66319,
+    "chinese_name": "克里特侧褶蛙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/1871545/medium.jpg",
+    "family": "Ranidae",
+    "provinces": []
+  },
+  "Amietia hymenopus": {
+    "taxon_id": 476398,
+    "chinese_name": "Berg stream frog",
+    "image_url": "https://static.inaturalist.org/photos/358288015/medium.jpg",
+    "family": "Pyxicephalidae",
+    "provinces": []
+  }
+}

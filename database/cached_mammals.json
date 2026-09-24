@@ -1,0 +1,86 @@
+{
+  "Lepus castroviejoi": {
+    "taxon_id": 43118,
+    "chinese_name": "西班牙兔",
+    "image_url": "https://static.inaturalist.org/photos/157172775/medium.jpg",
+    "family": "Leporidae",
+    "provinces": []
+  },
+  "Lepus fagani": {
+    "taxon_id": 43135,
+    "chinese_name": "埃塞俄比亚野兔",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/461181620/medium.jpg",
+    "family": "Leporidae",
+    "provinces": []
+  },
+  "Lepus starcki": {
+    "taxon_id": 43137,
+    "chinese_name": "埃塞俄比亚高原兔",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/8959013/medium.jpg",
+    "family": "Leporidae",
+    "provinces": []
+  },
+  "Lepus habessinicus": {
+    "taxon_id": 74503,
+    "chinese_name": "阿比西尼亚野兔",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/289590785/medium.jpg",
+    "family": "Leporidae",
+    "provinces": []
+  },
+  "Lepus yarkandensis": {
+    "taxon_id": 43141,
+    "chinese_name": "塔里木兔",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/171277806/medium.jpeg",
+    "family": "Leporidae",
+    "provinces": []
+  },
+  "Tamias siskiyou": {
+    "taxon_id": 225753,
+    "chinese_name": "錫斯基尤花栗鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/174133/medium.jpg",
+    "family": "Sciuridae",
+    "provinces": []
+  },
+  "Tamias amoenus": {
+    "taxon_id": 225740,
+    "chinese_name": "黄松花栗鼠",
+    "image_url": "https://static.inaturalist.org/photos/208389576/medium.jpeg",
+    "family": "Sciuridae",
+    "provinces": []
+  },
+  "Tamias townsendii": {
+    "taxon_id": 225756,
+    "chinese_name": "湯森花栗鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/19907/medium.jpg",
+    "family": "Sciuridae",
+    "provinces": []
+  },
+  "Tamias sibiricus": {
+    "taxon_id": 520585,
+    "chinese_name": "花鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/553742110/medium.jpg",
+    "family": "Sciuridae",
+    "provinces": []
+  },
+  "Tamias ruficaudus": {
+    "taxon_id": 225750,
+    "chinese_name": "紅尾花栗鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/347178314/medium.jpg",
+    "family": "Sciuridae",
+    "provinces": []
+  },
+  "Tamias rufus": {
+    "taxon_id": 225751,
+    "chinese_name": "霍皮花栗鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/387593801/medium.jpeg",
+    "family": "Sciuridae",
+    "provinces": []
+  },
+  "Tamias durangae": {
+    "taxon_id": 1100229,
+    "chinese_name": "Durango chipmunk",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/79187861/medium.jpeg",
+    "family": "Sciuridae",
+    "provinces": []
+  }
+}
