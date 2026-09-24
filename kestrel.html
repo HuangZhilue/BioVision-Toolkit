@@ -629,6 +629,7 @@
                 <option value="3" selected>鸟类 (默认)</option>
                 <option value="40151">哺乳动物</option>
                 <option value="47158">昆虫</option>
+                <option value="47178">鱼类(鱼等)</option>
                 <option value="47119">蛛形纲(蜘蛛等)</option>
                 <option value="47126">植物</option>
                 <option value="47170">真菌(蘑菇等)</option>
@@ -1056,6 +1057,18 @@
             const input = document.getElementById(`input-${idPrefix}`);
             const dropdown = document.getElementById(`dropdown-${idPrefix}`);
 
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const val = e.target.value.trim();
+                    if (val) {
+                        selectSpecies(sceneId, imgData, idPrefix, val, 'Unknown', isParent);
+                        input.value = '';
+                        dropdown.style.display = 'none';
+                    }
+                }
+            });
+
             input.addEventListener('input', (e) => {
                 const val = e.target.value.trim().toLowerCase();
                 dropdown.innerHTML = '';
@@ -1071,22 +1084,32 @@
                     (b.scientific && b.scientific.toLowerCase().includes(val))
                 ).slice(0, 10);
 
-                if (matches.length > 0) {
-                    matches.forEach((m) => {
-                        const div = document.createElement('div');
-                        div.className = 'autocomplete-item';
-                        div.innerHTML = `${m.chinese} <span style="color:#64748b;font-size:0.8em">(${m.scientific})</span>`;
-                        div.addEventListener('click', () => {
-                            selectSpecies(sceneId, imgData, idPrefix, m.chinese, m.family, isParent);
-                            input.value = '';
-                            dropdown.style.display = 'none';
-                        });
-                        dropdown.appendChild(div);
+                matches.forEach((m) => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.innerHTML = `${m.chinese} <span style="color:#64748b;font-size:0.8em">(${m.scientific})</span>`;
+                    div.addEventListener('click', () => {
+                        selectSpecies(sceneId, imgData, idPrefix, m.chinese, m.family, isParent);
+                        input.value = '';
+                        dropdown.style.display = 'none';
                     });
-                    dropdown.style.display = 'block';
-                } else {
+                    dropdown.appendChild(div);
+                });
+                
+                // Add custom species option
+                const customDiv = document.createElement('div');
+                customDiv.className = 'autocomplete-item';
+                customDiv.style.fontStyle = 'italic';
+                customDiv.style.color = '#3b82f6';
+                customDiv.innerHTML = `+ 手动标定为未收录物种: "${e.target.value.trim()}"`;
+                customDiv.addEventListener('click', () => {
+                    selectSpecies(sceneId, imgData, idPrefix, e.target.value.trim(), 'Unknown', isParent);
+                    input.value = '';
                     dropdown.style.display = 'none';
-                }
+                });
+                dropdown.appendChild(customDiv);
+
+                dropdown.style.display = 'block';
             });
 
             document.addEventListener('click', (e) => {
