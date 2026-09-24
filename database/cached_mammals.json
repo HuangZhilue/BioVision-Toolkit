@@ -103,5 +103,26 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/553742110/medium.jpg",
     "family": "Unknown",
     "provinces": []
+  },
+  "Dama dama": {
+    "taxon_id": 42161,
+    "chinese_name": "黇鹿",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/169989920/medium.jpeg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Axis axis": {
+    "taxon_id": 42166,
+    "chinese_name": "白斑鹿",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/261197112/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Cervus nippon": {
+    "taxon_id": 42210,
+    "chinese_name": "梅花鹿",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/186070135/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
   }
 }

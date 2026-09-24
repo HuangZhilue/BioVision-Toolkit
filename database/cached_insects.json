@@ -138,5 +138,12 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/637188993/medium.jpg",
     "family": "Unknown",
     "provinces": []
+  },
+  "Vespula flaviceps": {
+    "taxon_id": 358143,
+    "chinese_name": "细黄胡蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/585675663/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
   }
 }

@@ -14,17 +14,27 @@
    - **识别分类筛选**：可精确选择识别的生物大类（如植物、鸟类、昆虫等），如无法精确到“种”，系统会尽量定位到“属”或“科”。
    - **区域限制优化**：指定省份或在地图上点击定位，系统会自动降低该地区未曾记录过物种的排名，大幅提高本地物种识别的准确率。
 
-![离线识别主界面与框选功能](sample/离线识别主界面与框选功能.png)
+<p align="center">
+  <img src="sample/离线识别主界面与框选功能_part1.png" width="32%" />
+  <img src="sample/离线识别主界面与框选功能_part2.png" width="32%" />
+  <img src="sample/离线识别主界面与框选功能_part3.png" width="32%" />
+</p>
 
 2. **🌐 AI 物种识别 (在线备用版)**
    - 作为离线版的补充，当本地资源受限或需要其他接口支持时使用。
 
-![在线识别界面](sample/在线识别界面.png)
+<p align="center">
+  <img src="sample/在线识别界面_part1.png" width="32%" />
+  <img src="sample/在线识别界面_part2.png" width="32%" />
+  <img src="sample/在线识别界面_part3.png" width="32%" />
+</p>
 
 3. **🏷️ Kestrel 批量打标**
    - 高效管理和批量处理图像数据，为物种数据快速添加标签。
+   - **重新框选功能**：支持在网页端无缝读取原始大图，手动重新框选识别目标区域（无损操作，仅内存生效）。
 
 ![Kestrel 批量打标](sample/Kestrel批量打标.png)
+![Kestrel 重新框选区域](sample/Kestrel批量打标_重新框选区域.png)
 
 4. **📝 Bilibili 发布助手**
    - 专为 B站 (Bilibili) 创作者设计，帮助快速生成并发布有关物种识别的动态或视频内容。

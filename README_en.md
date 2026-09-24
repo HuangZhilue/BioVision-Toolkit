@@ -14,17 +14,27 @@ A species identification system powered by the local BioCLIP model, integrating 
    - **Taxonomic Filtering**: Precisely select the broad biological category (e.g., plants, birds, insects). If identifying the exact "species" is not possible, the system will attempt to narrow it down to the "genus" or "family".
    - **Regional Restriction**: Specify a province or pinpoint a location on the map. The system will automatically downrank species never recorded in that area, significantly boosting the accuracy of local species identification.
 
-![Offline AI Species Identification](sample/离线识别主界面与框选功能.png)
+<p align="center">
+  <img src="sample/离线识别主界面与框选功能_part1.png" width="32%" />
+  <img src="sample/离线识别主界面与框选功能_part2.png" width="32%" />
+  <img src="sample/离线识别主界面与框选功能_part3.png" width="32%" />
+</p>
 
 2. **🌐 AI Species Identification (Online Backup Version)**
    - Serves as a supplement to the offline version, useful when local resources are limited or alternative API support is required.
 
-![Online AI Species Identification](sample/在线识别界面.png)
+<p align="center">
+  <img src="sample/在线识别界面_part1.png" width="32%" />
+  <img src="sample/在线识别界面_part2.png" width="32%" />
+  <img src="sample/在线识别界面_part3.png" width="32%" />
+</p>
 
 3. **🏷️ Kestrel Batch Labeling**
    - Efficiently manage and batch-process image datasets, quickly appending labels to species data.
+   - **Re-crop Region**: Supports seamlessly loading the original high-resolution image in the browser, allowing users to manually re-select the target region (non-destructive, in-memory operation).
 
 ![Kestrel Batch Labeling](sample/Kestrel批量打标.png)
+![Kestrel Re-crop Region](sample/Kestrel批量打标_重新框选区域.png)
 
 4. **📝 Bilibili Publisher Assistant**
    - Designed specifically for Bilibili creators, helping to quickly generate and publish dynamic posts or video content related to species identification.
