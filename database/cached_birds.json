@@ -663,5 +663,26 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/173576219/medium.jpg",
     "family": "Apodidae",
     "provinces": []
+  },
+  "Cyornis hyacinthinus": {
+    "taxon_id": 1437211,
+    "chinese_name": "蓝背仙鹟",
+    "image_url": "https://static.inaturalist.org/photos/70082393/medium.jpg",
+    "family": "Muscicapidae",
+    "provinces": []
+  },
+  "Monticola rufocinereus": {
+    "taxon_id": 13146,
+    "chinese_name": "棕灰矶鸫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/9654042/medium.jpg",
+    "family": "Muscicapidae",
+    "provinces": []
+  },
+  "Monticola erythronotus": {
+    "taxon_id": 1423850,
+    "chinese_name": "琥珀山矶鸫",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/314360738/medium.jpeg",
+    "family": "Muscicapidae",
+    "provinces": []
   }
 }
