@@ -82,5 +82,26 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/79187861/medium.jpeg",
     "family": "Sciuridae",
     "provinces": []
+  },
+  "Neotamias townsendii": {
+    "taxon_id": 225756,
+    "chinese_name": "湯森花栗鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/19907/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Neotamias sonomae": {
+    "taxon_id": 225754,
+    "chinese_name": "索諾瑪花栗鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/169517/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Eutamias sibiricus": {
+    "taxon_id": 520585,
+    "chinese_name": "花鼠",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/553742110/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
   }
 }

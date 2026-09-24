@@ -33,5 +33,19 @@
     "image_url": "https://static.inaturalist.org/photos/358288015/medium.jpg",
     "family": "Pyxicephalidae",
     "provinces": []
+  },
+  "Euphlyctis cyanophlyctis": {
+    "taxon_id": 26093,
+    "chinese_name": "南亚双蛙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/585716278/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Occidozyga sumatrana": {
+    "taxon_id": 25862,
+    "chinese_name": "苏门答腊浮蛙",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/231038573/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
   }
 }

@@ -47,5 +47,96 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/32093368/medium.jpeg",
     "family": "Vespidae",
     "provinces": []
+  },
+  "Xylocopa iridipennis": {
+    "taxon_id": 1426501,
+    "chinese_name": "綠翅木蜂",
+    "image_url": "https://static.inaturalist.org/photos/68833955/medium.jpeg",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa tenuiscapa": {
+    "taxon_id": 465948,
+    "chinese_name": "绿翅木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/2120572/medium.JPG",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Aglae caerulea": {
+    "taxon_id": 416584,
+    "chinese_name": "Aglae caerulea",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/453277515/medium.jpg",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa auripennis": {
+    "taxon_id": 311383,
+    "chinese_name": "金翅木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/182799510/medium.jpeg",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa fenestrata": {
+    "taxon_id": 601825,
+    "chinese_name": "窗木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/339065927/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Xylocopa nasalis": {
+    "taxon_id": 502279,
+    "chinese_name": "竹木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/216955511/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Xylocopa praeusta": {
+    "taxon_id": 695713,
+    "chinese_name": "Xylocopa praeusta",
+    "image_url": null,
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa leucocephala": {
+    "taxon_id": 1106636,
+    "chinese_name": "Xylocopa leucocephala",
+    "image_url": null,
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa phalothorax": {
+    "taxon_id": 465795,
+    "chinese_name": "灰胸木蜂",
+    "image_url": "https://static.inaturalist.org/photos/118402866/medium.jpg",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa sinensis": {
+    "taxon_id": 513310,
+    "chinese_name": "中华木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/259957974/medium.jpeg",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa ruficeps": {
+    "taxon_id": 570760,
+    "chinese_name": "朱胸木蜂",
+    "image_url": "https://static.inaturalist.org/photos/219358554/medium.jpg",
+    "family": "Apidae",
+    "provinces": []
+  },
+  "Xylocopa dejeanii": {
+    "taxon_id": 502266,
+    "chinese_name": "领木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/425278819/medium.jpeg",
+    "family": "Unknown",
+    "provinces": []
+  },
+  "Xylocopa appendiculata": {
+    "taxon_id": 437628,
+    "chinese_name": "黄胸木蜂",
+    "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/637188993/medium.jpg",
+    "family": "Unknown",
+    "provinces": []
   }
 }

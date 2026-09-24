@@ -684,5 +684,33 @@
     "image_url": "https://inaturalist-open-data.s3.amazonaws.com/photos/314360738/medium.jpeg",
     "family": "Muscicapidae",
     "provinces": []
+  },
+  "Dendragapus obscurus": {
+    "taxon_id": 1241,
+    "chinese_name": "蓝松鸡",
+    "image_url": "https://static.inaturalist.org/photos/42903993/medium.jpg",
+    "family": "Phasianidae",
+    "provinces": []
+  },
+  "Dendragapus fuliginosus": {
+    "taxon_id": 72797,
+    "chinese_name": "乌蓝松鸡",
+    "image_url": "https://static.inaturalist.org/photos/524114202/medium.jpg",
+    "family": "Phasianidae",
+    "provinces": []
+  },
+  "Oreortyx pictus": {
+    "taxon_id": 1399,
+    "chinese_name": "山翎鹑",
+    "image_url": "https://static.inaturalist.org/photos/214188321/medium.jpg",
+    "family": "Odontophoridae",
+    "provinces": []
+  },
+  "Lyrurus mlokosiewiczi": {
+    "taxon_id": 1289696,
+    "chinese_name": "高加索黑琴鸡",
+    "image_url": "https://static.inaturalist.org/photos/65780613/medium.jpg",
+    "family": "Phasianidae",
+    "provinces": []
   }
 }
